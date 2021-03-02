@@ -22,7 +22,7 @@ node_pointer list_create_node(char* name,int address,short attributes)
 
 
 
-List list_add_to_list(List list, char* name, int address, short attributes)
+List list_add_to_list(node_pointer list, char* name, int address, short attributes)
 {
 	node_pointer node, temp;
 
@@ -44,9 +44,9 @@ List list_add_to_list(List list, char* name, int address, short attributes)
 * פונקציה שבודקת האם סמל כבר קיים , אם כן אז מחזירה 1
 * לעבוד על עניין ההחזרה
 */
-int list_search_symbol(List* head,const char* name)
+int list_search_symbol(node_pointer* List,const char* name)
 {
-	symbol_node* temp = head;
+	symbol_node* temp = List;
 
 	while (temp)
 	{
@@ -59,7 +59,7 @@ int list_search_symbol(List* head,const char* name)
 
 
 /*פונקציה לשיחרור רשימה בסוף שימוש.*/
-void list_free_symbol_list(List List)
+void list_free_symbol_list(node_pointer List)
 {
 	symbol_node* curr = List;
 	node_pointer* temp;
