@@ -12,3 +12,4 @@
 *
 */
 void fatal_error(const char* message);
+void error_set(char* msg, int line);

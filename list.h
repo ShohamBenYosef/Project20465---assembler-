@@ -8,22 +8,21 @@
 
 extern fp;
 
-typedef struct symbol_node {
+/* List node pointer. */
+typedef struct _node* node_pointer;
 
+/*טבלת סמלים*/
+typedef struct _node {
 	void* symbol_name;
 	int symbol_address;
-	char* symbol_attributes;
+	short symbol_attributes;
 
-	symbol_node next;
+	node_pointer next;
+} symbol_node; 
 
-}symbol_node;
 
 
-typedef struct symbol_list
-{
-	symbol_node* head;
-}List;
-
+typedef node_pointer List;
 
 
 /* dec*/

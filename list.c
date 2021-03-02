@@ -7,35 +7,38 @@
 
 
 /*func*/
-int list_create_new_node(List** head, char* name, int address, short attributes)
+node_pointer list_create_node(char* name,int address,short attributes)
 {
-	symbol_node* temp;
+	node_pointer newNode;
 
-	if (list_isEmpty)
-	{
-		*head = (symbol_node*)malloc(sizeof(symbol_node));
-			if (!head)
-				fatal_error(ErrorMemoryAlloc);
-	}
-	else
-	{
-		temp = (*head);
-		while (temp->next) temp = temp->next; /* run to end of list */
-
-		temp->next = (symbol_node*)malloc(sizeof(symbol_node));
-		if (!(temp->next))
-			fatal_error(ErrorMemoryAlloc);
-		temp = temp->next;
-	}
-	/* insert data */
-	temp->symbol_name = strcpy(temp->symbol_name, name);
-	temp->symbol_address = address;
-	temp->symbol_attributes = strcpy(temp->symbol_attributes, attributes);
-	temp->next = NULL;
-	
-	return 1;
+	newNode = (node_pointer)malloc(sizeof(symbol_node));
+	if (!newNode)
+		fatal_error(ErrorMemoryAlloc);
+	newNode->symbol_name = name;
+	newNode->symbol_address = address;
+	newNode->symbol_attributes = attributes;
 }
 
+
+
+
+List list_add_to_list(List list, char* name, int address, short attributes)
+{
+	node_pointer node, temp;
+
+	node = _list_create_node(name, address, attributes);
+
+	temp = list;
+	if (!list)
+		list = node;
+	else
+	{
+		while (temp->next)
+			temp = temp->next;
+
+		temp->next = node;
+	}
+}
 
 /*
 * פונקציה שבודקת האם סמל כבר קיים , אם כן אז מחזירה 1
@@ -55,22 +58,17 @@ int list_search_symbol(List* head,const char* name)
 
 
 
-int list_isEmpty(const List* lst)
-{
-	return lst->head == NULL;
-}
-
-
 /*פונקציה לשיחרור רשימה בסוף שימוש.*/
-void list_free_symbol_list(List* theList)
+void list_free_symbol_list(List List)
 {
-	symbol_node* current = theList->head;
-	symbol_node* next;
+	symbol_node* curr = List;
+	node_pointer* temp;
 
-	while (current)
+	while (curr)
 	{
-		next = current->next;
-		free(current);
-		current = next;
+		temp = curr;
+		curr = curr->next;
+		free(temp);
 	}
+	return;
 }
