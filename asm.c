@@ -8,15 +8,10 @@
 #include <ctype.h>
 #include <string.h>
 
-
-
-
-
+char* curr_lebel[80];
 char* current_char;
-/*func*/
-/*
-*
-*/
+
+
 mainList extract_data(mainList* mhead, char* word, int const line_num, char* line)
 {
 	int param_count = 0, comma_count = 0; 
@@ -90,7 +85,6 @@ mainList extract_data(mainList* mhead, char* word, int const line_num, char* lin
 } /* End of func */
 
 
-
 /* String */
 mainList extract_string(mainList* mhead, char* word, int const line_num, char* line)
 {
@@ -126,7 +120,7 @@ mainList extract_string(mainList* mhead, char* word, int const line_num, char* l
 		(_main_line*)(node->data) = dataOfNode;
 
 		word++;
-	}
+	} /* end of while */
 	/* for '\0'  char. */
 	IC++;
 	_main_line* dataOfNode;
@@ -141,10 +135,32 @@ mainList extract_string(mainList* mhead, char* word, int const line_num, char* l
 }
 
 
-/*extern*/
-void extern_line()
+/* extern   not finished */
+symbolList extern_line(symbolList* shead, char* word, int const line_num, char* line)
 {
 
-}
+	node_pointer node;
+	_symbol_line* extData;
+	char* tempArray;
+	char* temp = word;
+	while (*word != '\n')
+	{
+			NextWord(temp);
+			while (word <= temp)
+			{
 
+			}
 
+		/*if (word != ' ' && word != '\t')
+		*/
+	}
+	IC++;
+	extData->symbol = curr_lebel;
+	extData->value = 0;
+	extData->type = 4;
+
+	CreateAndaddToList(shead, node);
+	(_main_line*)(node->data) = extData;
+
+	return shead;
+} /* End of func */

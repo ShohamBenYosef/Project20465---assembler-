@@ -36,7 +36,6 @@ node_pointer CreateAndaddToList(node_pointer head, node_pointer node)
 	return head; /* returning pointer to the top of the list*/
 }
 
-
 node_pointer createNewNode()
 {
 	node_pointer newNode;
@@ -45,11 +44,12 @@ node_pointer createNewNode()
 	if (!newNode)
 		fatal_error(ErrorMemoryAlloc);
 
-	newNode->data = NULL;;
+	newNode->data = NULL;
 	newNode->next = NULL;
 
 	return newNode;
 }
+
 
 void freeList(node_pointer head, void(*_free_data)(void*))
 {
@@ -68,63 +68,7 @@ void freeList(node_pointer head, void(*_free_data)(void*))
 	}
 }
 
-
-
-
-
-
-
-
 /*
-node_pointer list_create_symbol_node(char* name,int address,short attributes)
-{
-	node_pointer newNode;
-
-	newNode = (node_pointer)malloc(sizeof(symbol_node));
-	if (!newNode)
-		fatal_error(ErrorMemoryAlloc);
-	newNode->symbol_name = name;
-	newNode->symbol_address = address;
-	newNode->symbol_attributes = attributes;
-	
-	return newNode;
-}
-
-
-
-
-List add_to_symbol_list(List list, char* name, int address, short attributes)
-{
-	node_pointer node, temp;
-
-	node = list_create_symbol_node(name, address, attributes);
-
-	temp = list;
-	if (!list)
-		list = node;
-	else
-	{
-		while (temp->next)
-			temp = temp->next;
-
-		temp->next = node;
-	}
-}
-
-
-int list_search_symbol_list(node_pointer* List,const char* name)
-{
-	symbol_node* temp = List;
-
-	while (temp)
-	{
-		if (strcmp(name, temp->symbol_name))
-			return 1;
-		temp = temp->next;
-	}
-}
-
-
 void list_free_symbol_list(node_pointer List)
 {
 	symbol_node* curr = List;

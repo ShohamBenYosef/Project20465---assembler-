@@ -2,15 +2,25 @@
 #include "file.h"
 #include "error.h"
 
-char* current_char;
-int DC, IC, L;
-extern fp;
 
-#define MAX_LINE_LENGTH 81
 #define MAX_DATA_NUM 4096
+
 
 #define IsBlank(c) ((c) == ' ' || (c) == '\t')
 #define NextWord(x) while (IsBlank(*(x))) (x)++ 
+
+
+#define NewLabel(_label) _label = (Label*)malloc(sizeof(Label));\
+	if (!_label) error_fatal(ErrorMemoryAlloc);\
+	_label->label = NULL;
+
+
+char* curr_lebel;
+char* current_char;
+char* tempWord[MAX_LINE_LENGTH];
+int DC, IC, L;
+extern fp;
+
 
 
 /**
@@ -22,8 +32,6 @@ typedef struct {
 	unsigned int func : 4;
 	unsigned int opcode : 4;
 } MachineCode;
-
-
 
 
 

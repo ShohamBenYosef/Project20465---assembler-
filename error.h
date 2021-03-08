@@ -11,4 +11,7 @@
 *
 */
 void fatal_error(const char* message);
+/**
+*
+*/
 void error_log(char* msg, int line);
