@@ -3,13 +3,13 @@
 #include <string.h>
 #include <ctype.h>
 #include "error.h"
-#include "asm.h"
+
 
 
 extern fp;
 
 /* enum for Attributes field in the symbol table/list. */
-typedef enum{entryCode, entryData, code, data, external} Attributes;
+typedef enum{codeType, dataType, externType ,entryType } Attributes;
 
 typedef struct _node* node_pointer;
 
@@ -32,7 +32,7 @@ typedef struct _node {
 * node for symbol table.
 */
 typedef struct _symbol_line {
-	char* symbol;
+	Lebel* lebel;
 	int value; /* decimal */
 	Attributes type;
 }_symbol_line;
@@ -41,13 +41,18 @@ typedef struct _symbol_line {
 * node for the main table - node is a "line".
 */
 typedef struct _main_line {
-	/*Lebel* lebel;*/
+	Lebel* lebel;
 	int address;
 	MachineCode bcode;
-	char name;
 	char are;
 }_main_line;
 
+
+typedef struct {
+	char* lebel;
+	int line;
+	Attributes type;
+}Lebel;
 
 /* */
 node_pointer CreateAndaddToList(node_pointer head, void* data);

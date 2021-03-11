@@ -138,3 +138,15 @@ char* read_word(const char* line, const int line_num, FILE* fp)
 		return NULL;
 	return curr_word;
 } /* End of func */
+
+
+/* var 2*/
+
+char* getWord(const char* line, int line_num, FILE* fp, char* word)
+{
+	int line_length = MAX_LINE_LENGTH;
+	int curr_pos = 0;
+
+	while(IsBlank(word) && word!=)
+
+}
