@@ -54,11 +54,17 @@ typedef struct {
 	Attributes type;
 }Lebel;
 
-/* */
+/**
+*
+*/
 node_pointer CreateAndaddToList(node_pointer head, void* data);
-/* */
+/**
+*
+*/
 node_pointer createNewNode(void* data);
-/* */
+/**
+*
+*/
 void freeList(node_pointer head, void(*_free_data)(void*));
 
 

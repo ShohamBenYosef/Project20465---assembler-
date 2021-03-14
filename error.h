@@ -11,10 +11,10 @@
 
 int errors_count;
 /**
-*
+* Prints an error message and the program exits
 */
 void fatal_error(const char* message);
 /**
-*
+* Prints an error message and adds 1 to the error counter
 */
 void error_log(char* msg, int line);

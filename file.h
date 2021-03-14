@@ -25,7 +25,7 @@ FILE* open_file(const char* file_name, char* ending, char* mod);
 char* runOnLine();
 
 /**
-*
+* Collect the next word.
 */
 char* read_word(const char* line, const int line_num, FILE* fp);
 

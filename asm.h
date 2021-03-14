@@ -55,3 +55,25 @@ mainList extract_data(mainList* mhead, char* word, int const line_num, char* lin
 *
 */
 mainList extract_string(mainList* mhead, char* word, int const line_num, char* line);
+/**
+*
+*/
+symbolList extern_line(symbolList* shead, char* word, int const line_num, char* line);
+/**
+*
+*/
+char* getLineLebel(char* line, int line_num);
+/**
+*
+*/
+void extract_lebel(char* word, char* curr_char, int const line_num, char* line, Attributes type);
+/**
+*
+*/
+int check_valid_lebel(char* lebel, int line_num);
+
+int parse();
+
+int parse2(FILE* fp);
+
+int lebel_compere(void* l1, void* l2);
