@@ -1,10 +1,8 @@
 /*
 * file.c
 */
-
 #pragma warning(disable : 4996)
 
-/*#include "error.h"*/
 #include "file.h"
 #include "error.h"
 #include <stdio.h>
@@ -13,11 +11,11 @@
 FILE* fp;
 
 /*
-* open a file for reading.
+* open a file
 * save pointer to the file (full_file_name).
-*
+*  - modolary
 */
-FILE* open_file(const char* file_name)
+FILE* open_file(const char* file_name,char* ending, char* mod)
 {
 
 	/*char**/ full_file_name = (char*)malloc((strlen(file_name) + 4));
@@ -26,9 +24,9 @@ FILE* open_file(const char* file_name)
 		fatal_error(ErrorMemoryAlloc);
 
 	strcpy(full_file_name, file_name);
-	strcat(full_file_name, FileEnding);
+	strcat(full_file_name, ending);
 
-	fp = fopen(full_file_name, "r");
+	fp = fopen(full_file_name, mod);
 	if (!fp)
 	{
 		fprintf(stderr, ErrorCantRead, full_file_name);
@@ -138,15 +136,3 @@ char* read_word(const char* line, const int line_num, FILE* fp)
 		return NULL;
 	return curr_word;
 } /* End of func */
-
-
-/* var 2*/
-
-char* getWord(const char* line, int line_num, FILE* fp, char* word)
-{
-	int line_length = MAX_LINE_LENGTH;
-	int curr_pos = 0;
-
-	while(IsBlank(word) && word!=)
-
-}

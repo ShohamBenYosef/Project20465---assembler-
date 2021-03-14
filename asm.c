@@ -10,30 +10,12 @@
 
 char* curr_lebel[80];
 
-int DC, IC;
-mainList mhead;
-symbolList shead;
+int DCF, ICF; /* save DC and IC for the second round. */
+mainList* mhead; /* main list head pointer*/
+symbolList* shead; /* symbol list head pointer*/
 
 const char* command_names[] = { "mov", "cmp", "add", "sub","lea", "clr","not", "inc", "dec", "jmp", "bne", "jsr", "red", "prn", "rts", "stop" };
 
-/*const Command commands[] = {
-	{0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-	{0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0},
-	{0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0},
-	{0, 1, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-	{0, 1, 0, 1, 1, 0, 1, 0 ,0 ,0 ,0, 0},
-	{0, 1, 0, 1, 1, 0, 1, 1 ,0 ,0 ,0, 0},
-	{0, 1, 0, 1, 1, 1, 0, 0 ,0 ,0 ,0, 0},
-	{0, 1, 0, 1, 1, 1, 0, 1 ,0 ,0 ,0, 0},
-	{1, 0, 0, 1, 1, 0, 1, 0 ,0 ,0 ,0, 0},
-	{1, 0, 0, 1, 1, 0, 1, 1 ,0 ,0 ,0, 0},
-	{1, 0, 0, 1, 1, 1, 0, 0 ,0 ,0 ,0, 0},
-	{1, 1, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-	{1, 1, 0, 1, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-	{1, 1, 1, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-	{1, 1, 1, 1, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-};------------------------------------------- TODO*/
 
 /* DATA*/
 mainList extract_data(mainList* mhead, char* word, int const line_num, char* line)
@@ -379,7 +361,7 @@ int parse()
 				continue;
 			}
 			/* add to main list */
-			/* need to add func to check if the lebel is alredy exist in the list*/
+			/* need to add func to check if the lebel is alredy exist in the list---------*/
 
 			IC++;
 			newMainNode(main_node);
@@ -409,10 +391,10 @@ int parse()
 			}
 			
 			/* start to build the binary opcode*/
-			/* need to add more thing to the bit field. - mayby we should usee more func..*/
+			/* need to add more thing to the bit field. - mayby we should usee more func..-----------------------------------*/
 			main_node->bcode.opcode = index;
 			
-			/* to do V*/
+			/* to do V----------------------------------------------------------------------------------------------------------*/
 			/* Find '/0' or /1 , assuming /0 is not followed by other options. */
 			nextWord(curr_char);
 			/* jmp to the start of the next word and Check what is the cmd*/
@@ -430,12 +412,176 @@ int parse()
 			/* extract first operand*/
 			NextWord(current_char);
 
+			/* 13*/
+			/* נתח את מבנה האופרנדים של ההוראה, וחשב מהו מס המילים הכולל שתופסת ההוראה בקוד מכונה ונקראה לו אל גדול    L*/
+			/*14*/
+			/* בניית קוד בינארי של המילה הראשונה, ןשל כל מילת-מידע נוספת המקודדת  אופרנד במיעון מיידי*/
 
 		}/* end of if ';' */
 	}/* end of while*/
+
+	if (errors_count > 0)
+		return 0;
+
+	/* 18 */
+	ICF = IC;
+	DCF = DC;
+
+	/* 19 */
+	update_line_in_symbol_list();/* to do*/
+
+	return 1;
 	/* 17 */
 }
 
-/*
 
-*/
+
+
+int parse2(FILE* fp)
+{
+	char* line,* word;
+	int ent_flag = 0, ext_flag = 0;
+	Lebel* tmp_lebel = NULL;
+	Lebel* fnd_lebel = NULL;
+	int address, line_num = 0;
+	/* nodes for the lists - main and symbol. */
+	_symbol_line* symbol_node = NULL;
+	_main_line* main_node = NULL;
+	int entry_flag = 0, extern_flag = 0;
+
+	/* 1 */
+	while ((line = runOnLine()))\
+	{
+		if (line != ';')
+		{
+			line_num++;
+
+			nextWord(word);
+			NewLabelNode(tmp_lebel);
+			/* 2 */
+			tmp_lebel->lebel = getLineLebel(line, line_num);
+			fnd_lebel = search_in_list(symbol_node, tmp_lebel, &lebel_compere);
+			free(tmp_lebel);
+
+			if (!fnd_lebel)
+			{
+				error_log("Error, lebel not found on the sec ", line_num);
+				continue;
+			}
+			word = line + strlen(fnd_lebel->label) + 1;
+			NextWord(word);
+			
+
+			/* 3 */
+			if ((!strncmp(word, ".data", 5) && (current_char - word) == 5 && *current_char != '/')
+				|| (!strncmp(word, ".string", 7) && (current_char - word) == 7 && *current_char != '/'))
+			{
+				continue;
+			}
+			/* 4 */
+			if (!strncmp(word, ".entry", 6) && (current_char - word) == 6 && *current_char != '/') 
+			{
+				/* 5 */
+				/* לא לשכוח לעשות פונקציה שמטפלת בסעיף 5 - - אולי כדאי לראות הרצאה..*/
+				entry_flag++;
+				continue;
+			}
+			if (!strncmp(word, ".extern", 7) && (current_char - word) == 7 && *current_char != '/')
+			{
+				extern_flag++; 
+				continue;
+			}
+			/* 6 */
+
+
+
+		}/* end of condition */
+	}/* end of while loop */
+
+
+	if (entry_flag > 0)
+	{
+		openExtEntFile("ent", shead); /* TODO */
+	}
+	if (extern_flag > 0)
+	{
+		openExtEntFile("ext", shead); /* TODO */
+	}
+
+	trans()
+
+
+}/* end of func */
+
+
+
+/*----------------Todo function   -------------------------------------------------------------   */
+addEntryLebel()
+{
+
+}
+
+int lebel_compere(void* l1, void* l2)
+{
+	Lebel* first_lebel = l1;
+	Lebel* second_lebel = l2;
+	return strcmp(first_lebel->lebel, second_lebel->lebel);
+}
+
+openExtEntFile()
+{
+
+}
+
+/*const Command commands[] = {
+	{0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
+	{0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0},
+	{0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0},
+	{0, 1, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
+	{0, 1, 0, 1, 1, 0, 1, 0 ,0 ,0 ,0, 0},
+	{0, 1, 0, 1, 1, 0, 1, 1 ,0 ,0 ,0, 0},
+	{0, 1, 0, 1, 1, 1, 0, 0 ,0 ,0 ,0, 0},
+	{0, 1, 0, 1, 1, 1, 0, 1 ,0 ,0 ,0, 0},
+	{1, 0, 0, 1, 1, 0, 1, 0 ,0 ,0 ,0, 0},
+	{1, 0, 0, 1, 1, 0, 1, 1 ,0 ,0 ,0, 0},
+	{1, 0, 0, 1, 1, 1, 0, 0 ,0 ,0 ,0, 0},
+	{1, 1, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
+	{1, 1, 0, 1, 0, 0, 0, 0 ,0 ,0 ,0, 0},
+	{1, 1, 1, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
+	{1, 1, 1, 1, 0, 0, 0, 0 ,0 ,0 ,0, 0},
+};------------------------------------------- TODO*/
+
+
+addToList()
+{
+
+
+}
+
+void update_line_in_symbol_list(){}
+
+void printObjectFile(const char* file_name)
+{
+	FILE* fpExt, * fpOb, * fpEnt;
+	
+	fpExt = open_file(full_file_name, ExternFileEnding, "w");
+	fpOb = open_file(full_file_name, ObjectFileEnding, "w");
+	fpEnt = open_file(full_file_name, EntryFileEnding, "w");
+
+	fprintf(fp,"\t\t\t%X\t%X\n", IC, DC);
+	mainList* temp = mhead;
+	while (temp) {
+		fprintf(fp, "%d\t%04X", temp->data->address, printBCode(temp.data.bcode));
+		temp = temp->next;
+	} 
+
+	
+	
+	close_file(file_name, ObjectFileEnding);
+}
+
+void close_file(const char* file_name, char* ending)
+{
+
+}

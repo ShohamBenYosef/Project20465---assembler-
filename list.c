@@ -82,3 +82,17 @@ void list_free_symbol_list(node_pointer List)
 	}
 	return;
 }*/
+
+void* search_in_list(node_pointer list, void* data, int(*_copmare)(void*, void*))
+{
+	node_pointer temp = list;
+
+	while (temp)
+	{
+		if (!_copmare(data, temp->data))
+			return temp->data;
+	
+		temp = temp->next;
+	}
+	return NULL;
+}

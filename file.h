@@ -2,7 +2,11 @@
 #include "error.h"
 #include "list.h"
 
-#define FileEnding ".as"
+#define MainFileEnding ".as"
+#define ObjectFileEnding ".ob"
+#define ExternFileEnding ".ext"
+#define EntryFileEnding ".ent"
+
 #define MAX_LINE_LENGTH 81
 
 /**/
@@ -13,7 +17,7 @@ char* full_file_name;
 * open a file for reading.
 * save pointer to the file in global variable (full_file_name).
 */
-FILE* open_file(const char* file_name);
+FILE* open_file(const char* file_name, char* ending, char* mod);
 
 /**
 *
