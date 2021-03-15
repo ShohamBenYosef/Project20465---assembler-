@@ -10,44 +10,29 @@
 
 FILE* fp;
 
-/*
-* open a file
-* save pointer to the file (full_file_name).
-*  - modolary
-*/
 FILE* open_file(const char* file_name,char* ending, char* mod)
 {
+	char* temp_name = (char*)malloc((strlen(file_name) + 4));
 
-	/*char**/ full_file_name = (char*)malloc((strlen(file_name) + 4));
-
-	if (!full_file_name)
+	if (!temp_name)
 		fatal_error(ErrorMemoryAlloc);
 
-	strcpy(full_file_name, file_name);
-	strcat(full_file_name, ending);
+	strcpy(temp_name, file_name);
+	strcat(temp_name, ending);
 
-	fp = fopen(full_file_name, mod);
+	fp = fopen(temp_name, mod);
 	if (!fp)
 	{
-		fprintf(stderr, ErrorCantRead, full_file_name);
+		fprintf(stderr, ErrorCantRead, temp_name);
 		fprintf(stderr, "\n");
-		free(full_file_name);
+		free(temp_name);
 		exit(EXIT_FAILURE);
 	}
 
-	free(full_file_name);
+	free(temp_name);
 	return fp;
 }
 
-/*
-* closing the file. (full_file_name)
-*/
-void close_file()
-{
-	fclose(fp);
-}
-
-/*----------------------------*/
 char* runOnLine()
 {
 	/* build array for each line. */
@@ -136,3 +121,17 @@ char* read_word(const char* line, const int line_num, FILE* fp)
 		return NULL;
 	return curr_word;
 } /* End of func */
+
+void close_file(const char* file_name, char* ending)
+{
+	char* full_file_name = (char*)malloc((strlen(file_name) + 4));
+	if (!full_file_name)
+		fatal_error(ErrorMemoryAlloc);
+
+	strcpy(full_file_name, file_name);
+	strcat(full_file_name, ending);
+
+	fclose(full_file_name);
+	free(full_file_name);
+	
+}

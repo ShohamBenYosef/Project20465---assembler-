@@ -9,13 +9,13 @@
 
 #define MAX_LINE_LENGTH 81
 
-/**/
+/*name of the main file! */
 char* full_file_name;
 
-
 /*
-* open a file for reading.
-* save pointer to the file in global variable (full_file_name).
+* open a file
+* save pointer to the file (full_file_name).
+*  - modolary
 */
 FILE* open_file(const char* file_name, char* ending, char* mod);
 
@@ -30,6 +30,6 @@ char* runOnLine();
 char* read_word(const char* line, const int line_num, FILE* fp);
 
 /*
-* closing the file. (full_file_name)
+* closing  file with a given ending . (full_file_name)
 */
-void close_file();
+void close_file(const char* file_name, char* ending);

@@ -7,91 +7,110 @@
 
 
 /*func*/
-/*
 
-לבנות פונקציה שתיצור צמתים ל2 הרשימות!
-לבנות פונ' שתמחק את כל הצמתים מ2 הרשימות
-לבנות פונק שתבדוק האם התוית כבר קיימת
+Line* addToMainList(Line* main_list_head, Line* new_node);
+Lebel* addToSymbolList(Lebel* lebel_list_head, Lebel* new_node);
+void freeLebelList(Lebel* head);
+void freeLineList(Line* head);
+Lebel* searchInLebelList(Lebel* head, char* lebel);
+Line* searchInMainList(Line* head, char* lebel);
 
-*/
 
 
-node_pointer CreateAndaddToList(node_pointer head, node_pointer node)
+/* add */
+
+Line* addToMainList( Line* main_list_head, Line* new_node)
 {
-	node_pointer temp;
+	Line* temp;
 
-	node = createNewNode();
-
-
-	temp = head;
-	if (!head)
-		head = node;
+	temp = main_list_head;
+	if (!main_list_head)
+		main_list_head = new_node;
 	else
 	{
 		while (temp->next)
 			temp = temp->next;
 
-		temp->next = node;
+		temp->next = new_node;
 	}
-	return head; /* returning pointer to the top of the list*/
+	return main_list_head; /* returning pointer to the top of the list*/
 }
 
-node_pointer createNewNode()
+Lebel* addToSymbolList(Lebel* lebel_list_head, Lebel* new_node)
 {
-	node_pointer newNode;
+	Lebel* temp;
+	temp = lebel_list_head;
+	if (!lebel_list_head)
+		lebel_list_head = new_node;
+	else {
+		while (temp->next)
+			temp = temp->next;
 
-	newNode = (node_pointer)malloc(sizeof(node_pointer));
-	if (!newNode)
-		fatal_error(ErrorMemoryAlloc);
-
-	newNode->data = NULL;
-	newNode->next = NULL;
-
-	return newNode;
+		temp->next = new_node;
+	}
+	return lebel_list_head;
 }
 
+/* free */
 
-void freeList(node_pointer head, void(*_free_data)(void*))
+void freeLebelList(Lebel* head)
 {
-	node_pointer p = head, temp;
+	Lebel* p, * temp;
+	p = temp = head;
 
 	while (p)
 	{
 		temp = p;
 		p = p->next;
 
-		/* to fix it and change name of var. */
-		_free_data(temp->data);
-		/*temp->data = NULL;
-		temp->next = NULL;*/
-		free(temp);
-	}
-}
-
-/*
-void list_free_symbol_list(node_pointer List)
-{
-	symbol_node* curr = List;
-	node_pointer* temp;
-
-	while (curr)
-	{
-		temp = curr;
-		curr = curr->next;
+		free(temp->lebel);
 		free(temp);
 	}
 	return;
-}*/
+} /* end of func */
 
-void* search_in_list(node_pointer list, void* data, int(*_copmare)(void*, void*))
+void freeLineList(Line* head)
 {
-	node_pointer temp = list;
+	Line* p, * temp;
+	p = temp = head;
+
+	while (p)
+	{
+		temp = p;
+		p = p->next;
+
+		free(temp->bcode);
+		free(temp->lebel);
+		free(temp);
+	}
+	return;
+} /* end of func */
+
+/* search*/
+
+Lebel*  searchInLebelList(Lebel* head, char* lebel)
+{
+	Lebel* temp = head;
 
 	while (temp)
 	{
-		if (!_copmare(data, temp->data))
-			return temp->data;
+		if (!_copmare(lebel, temp->lebel))
+			return temp->lebel;
 	
+		temp = temp->next;
+	}
+	return NULL;
+}
+
+Line* searchInMainList(Line* head, char* lebel)
+{
+	Line* temp = head;
+
+	while (temp)
+	{
+		if (!_copmare(lebel, temp->lebel))
+			return temp->lebel;
+
 		temp = temp->next;
 	}
 	return NULL;
