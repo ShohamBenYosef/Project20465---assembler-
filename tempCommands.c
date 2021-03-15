@@ -14,6 +14,10 @@ Code, Compile, Run and Debug online from anywhere in world.
 void getFirstOperand(char* currentChar);
 void parseOperand(char*currentChar,int operandLength);
 
+int typeOfCommand(char* word);
+void parseOperand(char* currentChar,int operandLength);
+void getFirstOperand(char* currentChar);
+
 const commands commandTypes[numOfcommands] = {
     {"mov", 0, 0, 2, 1, 1, 0, 1, 0, 1, 0, 1},
     {"cmp", 1, 0, 2, 1, 1, 0, 1, 1, 1, 0, 1},
@@ -33,15 +37,7 @@ const commands commandTypes[numOfcommands] = {
     {"stop", 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
-int main()
-{
-    int o;
-    char* currentWord =" #-1";
-   
-   getFirstOperand(currentWord);
 
-    return 0;
-}
 int typeOfCommand(char* word)
 {
     
