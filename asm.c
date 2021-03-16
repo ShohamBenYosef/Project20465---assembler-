@@ -231,6 +231,7 @@ char*  getLineLebel(char* line, int line_num)
 		lebel[length] = '\0';
 		return lebel;
 	}
+	free(lebel);
 	return NULL;
 }
 /* get the lebel - use after extern and entry */
@@ -264,7 +265,6 @@ int lebel_compere(void* l1, void* l2)
 	Lebel* second_lebel = l2;
 	return strcmp(first_lebel->lebel, second_lebel->lebel);
 }
-
 
 int parse()
 {
@@ -486,13 +486,15 @@ int parse2(FILE* fp)
 				error_log("Error, lebel not found on the sec ", line_num);
 				continue;
 			}
-			word = line + strlen(fnd_lebel->label) + 1;
+
+			/*jmp to the nxt word*/
+			word = line + strlen(fnd_lebel->lebel) + 1;
 			NextWord(word);
 			
 
 			/* 3 */
-			if ((!strncmp(word, ".data", 5) && (current_char - word) == 5 && *current_char != '/')
-				|| (!strncmp(word, ".string", 7) && (current_char - word) == 7 && *current_char != '/'))
+			if ((!strncmp(word, ".data", 5) && (curr_char - word) == 5 && *curr_char != '/')
+				|| (!strncmp(word, ".string", 7) && (curr_char - word) == 7 && *curr_char != '/'))
 			{
 				continue;
 			}
@@ -535,7 +537,7 @@ int parse2(FILE* fp)
 	printObjectFile(obOut);
 	close_file(full_file_name, ObjectFileEnding);
 
-
+	
 	freeLebelList(lebel_list_head);
 	freeLineList(main_list_head);
 	printf(" END OF %s FILE", full_file_name);
@@ -580,9 +582,9 @@ void printEnt(FILE* name_file)
 };------------------------------------------- TODO*/
 
 
-void update_line_in_symbol_list();
+/* void update_line_in_symbol_list();  */
 
-void printObjectFile(const char* file_name)
+void printObjectFile(FILE* file_name)
 {
 	Line* temp = main_list_head;
 
@@ -594,13 +596,26 @@ void printObjectFile(const char* file_name)
 			fprintf(file_name, "%04d\t%04X\t%c", temp->address, temp->bcode->allBits, temp->are);
 		
 		else
-			fprintf(file_name, "%04d\t%04X\t%c", temp->address, translate(temp->bcode), temp->are);
+			fprintf(file_name, "%04d\t%01X%01X%01X\t%c", temp->address, temp->bcode->opcode, temp->bcode->func, addTargetToSource(temp->bcode), temp->are);
 		
 		temp = temp->next;
 	}
 
 }
+int addTargetToSource(const Line* node)
+{
+	int res = 0;
+	res += (node->bcode->source);
 
+	if (node->bcode->target == 1)
+		res += 4;
+	if (node->bcode->target == 2)
+		res += 8;
+	if (node->bcode->target == 3)
+		res += 12;
+	
+	return res;
+}
 
 /* from Yair */
 int typeOfCommand(char* word)

@@ -40,20 +40,6 @@ extern fp;
 
 
 
-/**
-* Hold the 12 bits.  ------- bits field ---------
-*/
-typedef struct {
-	
-	unsigned int source : 2;
-	unsigned int target : 3;
-	unsigned int func : 4;
-	unsigned int opcode : 4;
-
-	unsigned int allBits : 12;
-
-} MachineCode;
-
 
 
 typedef struct {

@@ -46,6 +46,20 @@ typedef struct {
 
 
 
+/**
+* Hold the 12 bits.  ------- bits field ---------
+*/
+typedef struct {
+
+	unsigned int source : 2;
+	unsigned int target : 3;
+	unsigned int func : 4;
+	unsigned int opcode : 4;
+
+	unsigned int allBits : 12;
+
+} MachineCode;
+
 
 
 Line* addToMainList(Line* main_list_head, Line* new_node);
