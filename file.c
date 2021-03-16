@@ -106,7 +106,7 @@ char* read_word(const char* line, const int line_num, FILE* fp)
 		if (word_char - 1 == word_length)
 		{
 			word_length += MAX_LINE_LENGTH;
-			curr_word = (char*)realloc((word_length + 1) * sizeof(char));
+			curr_word = (char*)realloc((word_length+1)*sizeof(char));
 		}
 
 		curr_word[word_char] = curr_char;
@@ -121,6 +121,8 @@ char* read_word(const char* line, const int line_num, FILE* fp)
 		return NULL;
 	return curr_word;
 } /* End of func */
+
+
 
 void close_file(const char* file_name, char* ending)
 {

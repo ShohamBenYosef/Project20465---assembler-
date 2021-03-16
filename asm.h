@@ -42,19 +42,19 @@ typedef struct {
 
 
 /**
-* 
+* A function that extracts the information after the word .data in a assembly line
 */
 Line extract_data(char* word, int const line_num);
 /**
-*
+* A function that extracts the information after the word .string in a assembly line
 */
 Line* extract_string(char* word, int const line_num, char* line);
 /**
-*
+* A function that extracts the next Lebel.
 */
 void extract_lebel(char* word, char* curr_char, int const line_num, char* line, Attributes type);
 /**
-*
+* A function that extracts the first Lebel is the line.
 */
 char* getLineLebel(char* line, int line_num);
 /**
@@ -62,17 +62,10 @@ char* getLineLebel(char* line, int line_num);
 */
 int check_valid_lebel(char* lebel, int line_num);
 /**
-*
+* A method that parses Line after Line in the assembly file. (First round in the algorithm)
 */
 int parse();
-/**
-*
-*/
-int parse2(FILE* fp);
-/**
-*
-*/
-int lebel_compere(void* l1, void* l2);
+
 
 
 

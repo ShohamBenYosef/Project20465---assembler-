@@ -9,8 +9,6 @@
 #include <string.h>
 
 
-char* curr_lebel[80];
-
 int DCF, ICF; /* save DC and IC for the second round. */
 int IC, DC;
 
@@ -232,13 +230,6 @@ int check_valid_lebel(char* lebel, int line_num)
 	return 1;
 }
 
-int lebel_compere(void* l1, void* l2)
-{
-	Lebel* first_lebel = l1;
-	Lebel* second_lebel = l2;
-	return strcmp(first_lebel->lebel, second_lebel->lebel);
-}
-
 int parse()
 {
 	/* 1 */
@@ -269,7 +260,7 @@ int parse()
 
 
 	/* check if there is a line */
-	while ((line = runOnLine())) /* 2*/
+	while (line = runOnLine()) /* 2*/
 	{
 		line_num++;
 
@@ -374,7 +365,8 @@ int parse()
 				error_set("Error, Line length is over 81 characters.\n", line_num);
 				continue;
 			}
-
+			/****************************************************************
+			*******************************************************************/
 			/* cmp the command with */
 			commandNum = typeOfCommand(*word);
 			
@@ -405,7 +397,9 @@ int parse()
 			/*14*/
 			/* בניית קוד בינארי של המילה הראשונה, ןשל כל מילת-מידע נוספת המקודדת  אופרנד במיעון מיידי*/
 
-		}/* end of if ';' */
+		}/* end of if  */
+			/****************************************************************
+			*******************************************************************/
 	}/* end of while*/
 
 	if (errors_count > 0)
@@ -421,215 +415,3 @@ int parse()
 	return 1;
 	/* 17 */
 }
-
-
-int parse2(FILE* fp)
-{
-	FILE* obOut, *extOut,* entOut;
-	char* line,* word;
-	int ent_flag = 0, ext_flag = 0;
-	Lebel* tmp_lebel = NULL;
-	Lebel* fnd_lebel = NULL;
-	
-	int address, line_num = 0;
-	long code;
-
-	/* nodes for the lists - main and symbol. */
-	Lebel* symbol_node = NULL;
-	Line* node = NULL;
-	
-	int entry_flag = 0, extern_flag = 0;
-
-	/* 1 */
-	while ((line = runOnLine()))\
-	{
-		if (line != ';')
-		{
-			line_num++;
-
-			nextWord(word);
-			NewLabelNode(tmp_lebel);
-			/* 2 */
-			tmp_lebel->lebel = getLineLebel(line, line_num);
-			fnd_lebel = search_in_list(symbol_node, tmp_lebel, &lebel_compere);
-			free(tmp_lebel);
-
-			if (!fnd_lebel)
-			{
-				error_log("Error, lebel not found on the sec ", line_num);
-				continue;
-			}
-
-			/*jmp to the nxt word*/
-			word = line + strlen(fnd_lebel->lebel) + 1;
-			NextWord(word);
-			
-
-			/* 3 */
-			if ((!strncmp(word, ".data", 5) && (curr_char - word) == 5 && *curr_char != '/')
-				|| (!strncmp(word, ".string", 7) && (curr_char - word) == 7 && *curr_char != '/'))
-			{
-				continue;
-			}
-			/* 4 */
-			if (!strncmp(word, ".entry", 6) && (curr_char - word) == 6 && *curr_char != '/') 
-			{
-				/* 5 */
-				/* לא לשכוח לעשות פונקציה שמטפלת בסעיף 5 - - אולי כדאי לראות הרצאה..*/
-				entry_flag++;
-				continue;
-			}
-			if (!strncmp(word, ".extern", 7) && (curr_char - word) == 7 && *curr_char != '/')
-			{
-				extern_flag++; 
-				continue;
-			}
-			/* 6 */
-
-
-
-		}/* end of condition */
-
-	}/* end of while loop */
-
-
-	if (entry_flag > 0)
-	{
-		entOut = open_file(full_file_name , EntryFileEnding, "\"w\""); 
-		printEnt(entOut);
-		close_file(full_file_name, EntryFileEnding);
-	}
-	if (extern_flag > 0)
-	{
-		extOut = open_file(full_file_name, ExternFileEnding, "\"w\"");
-		printExt(extOut); /* TODO!*/
-		close_file(full_file_name, ExternFileEnding);
-	}
-
-	obOut = open_file(full_file_name, ObjectFileEnding, "\"w\"");
-	printObjectFile(obOut);
-	close_file(full_file_name, ObjectFileEnding);
-
-	
-	freeLebelList(lebel_list_head);
-	freeLineList(main_list_head);
-	printf(" END OF %s FILE", full_file_name);
-
-}/* end of func */
-
-
-void printEnt(FILE* name_file)
-{
-	Lebel* temp = lebel_list_head;
-	
-	while (temp)
-	{
-		if (temp->type == entryType)
-			fprintf(name_file, "%s\t%04d", temp->lebel, temp->line);
-		
-		temp = temp->next;
-	}/* end of while*/
-}
-
-
-
-
-/*----------------Todo function   -------------------*/
-/*const Command commands[] = {
-	{0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-	{0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0},
-	{0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0},
-	{0, 1, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-	{0, 1, 0, 1, 1, 0, 1, 0 ,0 ,0 ,0, 0},
-	{0, 1, 0, 1, 1, 0, 1, 1 ,0 ,0 ,0, 0},
-	{0, 1, 0, 1, 1, 1, 0, 0 ,0 ,0 ,0, 0},
-	{0, 1, 0, 1, 1, 1, 0, 1 ,0 ,0 ,0, 0},
-	{1, 0, 0, 1, 1, 0, 1, 0 ,0 ,0 ,0, 0},
-	{1, 0, 0, 1, 1, 0, 1, 1 ,0 ,0 ,0, 0},
-	{1, 0, 0, 1, 1, 1, 0, 0 ,0 ,0 ,0, 0},
-	{1, 1, 0, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-	{1, 1, 0, 1, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-	{1, 1, 1, 0, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-	{1, 1, 1, 1, 0, 0, 0, 0 ,0 ,0 ,0, 0},
-};------------------------------------------- TODO*/
-
-
-/* void update_line_in_symbol_list();  */
-
-void printObjectFile(FILE* file_name)
-{
-	Line* temp = main_list_head;
-
-	fprintf(file_name, "\t\t\t\t%d\t%d\n", ICF, DCF);
-	while (temp)
-	{
-		
-		if (temp->is_instruction)
-			fprintf(file_name, "%04d\t%04X\t%c", temp->address, temp->bcode->allBits, temp->are);
-		
-		else
-			fprintf(file_name, "%04d\t%01X%01X%01X\t%c", temp->address, temp->bcode->separateBits.opcode, temp->bcode->separateBits.func, addTargetToSource(temp), temp->are);
-		
-		temp = temp->next;
-	}
-
-}
-int addTargetToSource(const Line* node)
-{
-	int res = 0;
-	res += (node->bcode->separateBits.source);
-
-	if (node->bcode->separateBits.target == 1)
-		res += 4;
-	if (node->bcode->separateBits.target == 2)
-		res += 8;
-	if (node->bcode->separateBits.target == 3)
-		res += 12;
-	
-	return res;
-}
-
-
-
-/* from Yair */
-int typeOfCommand(char* word)
-{
-	int i;
-	/* Search if match to a command in the commands types */
-	for (i = 0; i < NUM_OF_COMMANDS; ++i)
-	{
-		if (strcmp(word, commandTypes[i].name) == 0)
-			return i;
-	}
-	/*if the isnt a match*/
-	return -1;
-}
-
-
-
-
-
-
-
-/*
-
-const commands commandTypes[NUM_OF_COMMANDS] = {
-	{"mov", 0, 0, 2, 1, 1, 0, 1, 0, 1, 0, 1},
-	{"cmp", 1, 0, 2, 1, 1, 0, 1, 1, 1, 0, 1},
-	{"add", 2, 1, 2, 1, 1, 0, 1, 0, 1, 0, 1},
-	{"sub", 2, 2 ,2, 1, 1, 0, 1, 0, 1, 0, 1},
-	{"lea", 4, 0 ,2, 0, 1, 0, 0, 0, 1, 0, 1},
-	{"clr", 5, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"not", 5, 2, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"inc", 5, 3, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"dec", 5, 4, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"jmp", 9, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0},
-	{"bne", 9, 2, 1, 0, 0, 0, 0, 0, 1, 1, 0},
-	{"jsr", 9, 3, 1, 0, 0, 0, 0, 0, 1, 1, 0},
-	{"red", 12, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"prn", 13, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1},
-	{"rts", 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{"stop", 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-};
-*/
