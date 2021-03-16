@@ -14,25 +14,6 @@ char* curr_lebel[80];
 int DCF, ICF; /* save DC and IC for the second round. */
 int IC, DC;
 
-const commands commandTypes[NUM_OF_COMMANDS] = {
-	{"mov", 0, 0, 2, 1, 1, 0, 1, 0, 1, 0, 1},
-	{"cmp", 1, 0, 2, 1, 1, 0, 1, 1, 1, 0, 1},
-	{"add", 2, 1, 2, 1, 1, 0, 1, 0, 1, 0, 1},
-	{"sub", 2, 2 ,2, 1, 1, 0, 1, 0, 1, 0, 1},
-	{"lea", 4, 0 ,2, 0, 1, 0, 0, 0, 1, 0, 1},
-	{"clr", 5, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"not", 5, 2, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"inc", 5, 3, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"dec", 5, 4, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"jmp", 9, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0},
-	{"bne", 9, 2, 1, 0, 0, 0, 0, 0, 1, 1, 0},
-	{"jsr", 9, 3, 1, 0, 0, 0, 0, 0, 1, 1, 0},
-	{"red", 12, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"prn", 13, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1},
-	{"rts", 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{"stop", 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-};
-
 
 const char* command_names[] = { "mov", "cmp", "add", "sub","lea", "clr","not", "inc", "dec", "jmp", "bne", "jsr", "red", "prn", "rts", "stop" };
 
@@ -85,12 +66,10 @@ Line extract_data(char* word, int const line_num)
 			data_num = (MAX_DATA_NUM - data_num); /* Complement 2 */
 		}
 		DC++; /* the actual address*/
-		NewMainNode(node);
+		newLineNode(node, DC, 1, 'A');
 		node->lebel = NULL;
-		node->are = 'A';
-		node->address = DC;
-		node->is_instruction = 1;
 		node->bcode->allBits = data_num;
+
 		addToList(main_list_head, node);
 
 		nextWord(*word);
@@ -134,12 +113,9 @@ Line* extract_string(char* word, int const line_num, char* line)
 	{
 		DC++; /* the actual address*/
 		/* */
-		NewMainNode(node);
-		node->address = DC;
+		newLineNode(node, DC, 1, 'A');
 		node->lebel = NULL;
-		node->is_instruction = 1;
 		node->bcode->allBits = *(word + 1);
-		node->are = 'A';
 		
 		addToList(main_list_head, node);
 		
@@ -148,13 +124,10 @@ Line* extract_string(char* word, int const line_num, char* line)
 	/* for '\0'  char. */
 	DC++;
 	
-	NewMainNode(node);
-	node->address = DC;
-	node->is_instruction = 1;
+	newLineNode(node, DC, 1, 'A');
 	node->lebel = NULL;
 	node->bcode->allBits = '0';
-	node->are = 'A';
-	/**/
+	
 	addToList(main_list_head, node);
 	
 	return main_list_head;
@@ -499,14 +472,14 @@ int parse2(FILE* fp)
 				continue;
 			}
 			/* 4 */
-			if (!strncmp(word, ".entry", 6) && (current_char - word) == 6 && *current_char != '/') 
+			if (!strncmp(word, ".entry", 6) && (curr_char - word) == 6 && *curr_char != '/') 
 			{
 				/* 5 */
 				/* לא לשכוח לעשות פונקציה שמטפלת בסעיף 5 - - אולי כדאי לראות הרצאה..*/
 				entry_flag++;
 				continue;
 			}
-			if (!strncmp(word, ".extern", 7) && (current_char - word) == 7 && *current_char != '/')
+			if (!strncmp(word, ".extern", 7) && (curr_char - word) == 7 && *curr_char != '/')
 			{
 				extern_flag++; 
 				continue;
@@ -596,7 +569,7 @@ void printObjectFile(FILE* file_name)
 			fprintf(file_name, "%04d\t%04X\t%c", temp->address, temp->bcode->allBits, temp->are);
 		
 		else
-			fprintf(file_name, "%04d\t%01X%01X%01X\t%c", temp->address, temp->bcode->opcode, temp->bcode->func, addTargetToSource(temp->bcode), temp->are);
+			fprintf(file_name, "%04d\t%01X%01X%01X\t%c", temp->address, temp->bcode->separateBits.opcode, temp->bcode->separateBits.func, addTargetToSource(temp), temp->are);
 		
 		temp = temp->next;
 	}
@@ -605,22 +578,23 @@ void printObjectFile(FILE* file_name)
 int addTargetToSource(const Line* node)
 {
 	int res = 0;
-	res += (node->bcode->source);
+	res += (node->bcode->separateBits.source);
 
-	if (node->bcode->target == 1)
+	if (node->bcode->separateBits.target == 1)
 		res += 4;
-	if (node->bcode->target == 2)
+	if (node->bcode->separateBits.target == 2)
 		res += 8;
-	if (node->bcode->target == 3)
+	if (node->bcode->separateBits.target == 3)
 		res += 12;
 	
 	return res;
 }
 
+
+
 /* from Yair */
 int typeOfCommand(char* word)
 {
-
 	int i;
 	/* Search if match to a command in the commands types */
 	for (i = 0; i < NUM_OF_COMMANDS; ++i)
@@ -631,3 +605,31 @@ int typeOfCommand(char* word)
 	/*if the isnt a match*/
 	return -1;
 }
+
+
+
+
+
+
+
+/*
+
+const commands commandTypes[NUM_OF_COMMANDS] = {
+	{"mov", 0, 0, 2, 1, 1, 0, 1, 0, 1, 0, 1},
+	{"cmp", 1, 0, 2, 1, 1, 0, 1, 1, 1, 0, 1},
+	{"add", 2, 1, 2, 1, 1, 0, 1, 0, 1, 0, 1},
+	{"sub", 2, 2 ,2, 1, 1, 0, 1, 0, 1, 0, 1},
+	{"lea", 4, 0 ,2, 0, 1, 0, 0, 0, 1, 0, 1},
+	{"clr", 5, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1},
+	{"not", 5, 2, 1, 0, 0, 0, 0, 0, 1, 0, 1},
+	{"inc", 5, 3, 1, 0, 0, 0, 0, 0, 1, 0, 1},
+	{"dec", 5, 4, 1, 0, 0, 0, 0, 0, 1, 0, 1},
+	{"jmp", 9, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0},
+	{"bne", 9, 2, 1, 0, 0, 0, 0, 0, 1, 1, 0},
+	{"jsr", 9, 3, 1, 0, 0, 0, 0, 0, 1, 1, 0},
+	{"red", 12, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1},
+	{"prn", 13, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1},
+	{"rts", 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	{"stop", 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
+*/

@@ -14,7 +14,7 @@ void freeLebelList(Lebel* head);
 void freeLineList(Line* head);
 Lebel* searchInLebelList(Lebel* head, char* lebel);
 Line* searchInMainList(Line* head, char* lebel);
-
+Line* newLineNode(Line* node, int line, int instruction, char ARE);
 
 
 /* add */
@@ -114,4 +114,21 @@ Line* searchInMainList(Line* head, char* lebel)
 		temp = temp->next;
 	}
 	return NULL;
+}
+
+Line* newLineNode(Line* node, int line, int instruction, char ARE)
+{
+	node = (Line*)malloc(sizeof(Line));
+	if (!node)
+		fatal_error(ErrorMemoryAlloc);
+	node->lebel = (char*)malloc(sizeof(char));
+	if (!node->lebel)
+		fatal_error(ErrorMemoryAlloc);
+
+	node->address = line;
+	node->is_instruction = instruction;
+	node->are = ARE;
+	node->bcode = NULL;
+	node->next = NULL
+
 }

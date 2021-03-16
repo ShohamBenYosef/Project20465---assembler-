@@ -11,6 +11,7 @@
 #define IsBlank(c) ((c) == ' ' || (c) == '\t')
 #define NextWord(x) while (IsBlank(*(x))) (x)++ 
 
+
 /* build new lebel node */
 #define NewLebelNode(_node) _label = (Label*)malloc(sizeof(Label));\
 	if (!_label) error_fatal(ErrorMemoryAlloc);\
@@ -19,26 +20,11 @@
 	_label->line = 0;\
 	_lebel->type = 0:\
 	_lebel->next = NULL;
-	
-/* build new main list node */
-#define NewMainNode(_node) _node = (Line*)malloc(sizeof(Line));\
-	if (!_node) fatal_error(ErrorMemoryAlloc);\
-	_node->label =NULL;\
-	_node->address = 0;\
-	_node->is_instruction = 0;\
-	_node->are = '0';\
-	_node->bcode = 0;\
-	_node->next = NULL;
-	/*_node->machine_code = 0;\*/
 
-
-/**/
 
 char* tempWord[MAX_LINE_LENGTH];
 int DC, IC, L;
 extern fp;
-
-
 
 
 
