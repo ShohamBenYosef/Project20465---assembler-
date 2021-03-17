@@ -7,6 +7,7 @@
 #define ErrorMissingArgument "Missing argument."
 #define ErrorCantRead "Could not open file %s for reading."
 #define ErrorMemoryAlloc "Memory allocation failed."
+#define ErrorInAssemblyCode "there's error in the code - exit without create files."
 
 
 int errors_count;

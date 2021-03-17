@@ -9,7 +9,14 @@
 extern fp;
 
 /* enum for Attributes field in the symbol table/list. */
-typedef enum{codeType, dataType, externType ,entryType } Attributes;
+typedef enum{
+
+	codeType,
+	dataType,
+	externType,
+	entryType 
+
+} Attributes;
 
 /* for symbol table - for define. */
 typedef struct LebelList
@@ -27,10 +34,10 @@ typedef struct MainList
 /**
 * node for the main table - node is a "line".
 */
-typedef struct {
+typedef struct Line {
 	char* lebel;
 	int address;
-	MachineCode* bcode;
+	MachineCode bcode;
 	int is_instruction;
 	char are;
 	struct Line* next;
@@ -77,5 +84,5 @@ Lebel* addToSymbolList(Lebel* lebel_list_head, Lebel* new_node);
 void freeLebelList(Lebel* head);
 void freeLineList(Line* head);
 Lebel* searchInLebelList(Lebel* head, char* lebel);
-Line* searchInMainList(Line* head, char* lebel);
-Line* newLineNode(Line* node, int line, int instruction, char ARE);
+Line searchInMainList(Line* head, char* lebel);
+Line newLineNode(Line* node, int line, int instruction, char ARE);

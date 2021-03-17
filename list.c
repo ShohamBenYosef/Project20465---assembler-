@@ -79,7 +79,7 @@ void freeLineList(Line* head)
 		temp = p;
 		p = p->next;
 
-		free(temp->bcode);
+		free(temp->bcode.allBits);
 		free(temp->lebel);
 		free(temp);
 	}
@@ -128,7 +128,7 @@ Line* newLineNode(Line* node, int line, int instruction, char ARE)
 	node->address = line;
 	node->is_instruction = instruction;
 	node->are = ARE;
-	node->bcode = NULL;
+	node->bcode.allBits = 0;
 	node->next = NULL
 
 }
