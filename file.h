@@ -1,3 +1,6 @@
+#ifndef FILE_H_
+#define FILE_H_
+
 #include <stdio.h>
 #include "error.h"
 #include "list.h"
@@ -28,6 +31,9 @@ char* runOnLine();
 * Collect the next word.
 */
 char* read_word(const char* line, const int line_num, FILE* fp);
+
+
+#endif
 
 /*
 * closing  file with a given ending . (full_file_name)

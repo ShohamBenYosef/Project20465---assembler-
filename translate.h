@@ -1,6 +1,9 @@
 /**
 * translate.h
 */
+#ifndef TRANSLATE_H_
+#define TRANSLATE_H_
+
 #include <stdio.h>
 #include "file.h"
 #include "error.h"
@@ -26,3 +29,5 @@ void printObjectFile(FILE* file_name);
 *
 */
 int addTargetToSource(const Line* node);
+
+#endif

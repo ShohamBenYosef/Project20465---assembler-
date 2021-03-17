@@ -32,8 +32,8 @@ int parse2()
 {
 
 	/* file to print on */
-	FILE* obOut, *extOut,* entOut;
-	
+	FILE* obOut, * extOut, * entOut;
+
 
 	/* temp lebels */
 	Lebel* tmp_lebel = lebel_list_head;
@@ -68,7 +68,7 @@ int parse2()
 
 			while (node)
 			{
-				if (!strcmp(tmp_lebel->lebel, node->lebel) )
+				if (!strcmp(tmp_lebel->lebel, node->lebel))
 				{
 					node->address = tmp_lebel->line;
 					node->are = 'E';
@@ -97,12 +97,12 @@ int parse2()
 				fnd_lebel = fnd_lebel->next;
 			}
 			fnd_lebel = lebel_list_head;
-			
+
 			while (node)
 			{
 				if (!strcmp(tmp_lebel->lebel, node->lebel))
 				{
-					node->bcode->allBits = 0;
+					node->bcode.allBits = 0;
 					node->are = 'E';
 					empty_extern = 0;
 				}
@@ -113,10 +113,10 @@ int parse2()
 		}
 		node = main_list_head;
 
-		
+
 	}/* end of while loop */
 
-	
+
 
 	/* run on the main line and check if theres any MachineCode missing */
 	while (tmp_lebel)
@@ -125,7 +125,7 @@ int parse2()
 		{
 			if (strcmp(node->lebel, tmp_lebel))
 			{
-				node->bcode->allBits = tmp_lebel->line;
+				node->bcode.allBits = tmp_lebel->line;
 				node->are = 'E';
 			}
 			node = node->next;
@@ -138,12 +138,12 @@ int parse2()
 	/* last check of error before print */
 	if (errors_count > 0)
 		fatal_error(ErrorInAssemblyCode);
-	
+
 
 	/* Entry lebel */
 	if (entry_flag > 0)
 	{
-		entOut = open_file(full_file_name , EntryFileEnding, "\"w\""); 
+		entOut = open_file(full_file_name, EntryFileEnding, "\"w\"");
 		printEnt(entOut);
 		close_file(full_file_name, EntryFileEnding);
 	}
@@ -165,6 +165,7 @@ int parse2()
 	freeLineList(main_list_head);
 	printf(" END OF %s FILE", full_file_name);
 
+	return 1;
 }/* end of func */
 
 /**
@@ -178,7 +179,7 @@ void printEnt(FILE* name_file)
 	{
 		if (temp_lebel->type == entryType)
 			fprintf(name_file, "%s\t%04d\n", temp_lebel->lebel, temp_lebel->line);
-		
+
 		temp_lebel = temp_lebel->next;
 	}/* end of while*/
 	/* return fnd back to the start. */
@@ -192,7 +193,7 @@ void printExt(FILE* name_file)
 {
 	Lebel* temp_lebel = lebel_list_head;
 	Lebel* fnd_lebel = lebel_list_head;
-	
+
 
 	while (temp_lebel)
 	{
@@ -202,7 +203,7 @@ void printExt(FILE* name_file)
 			{
 				if (!strcmp(fnd_lebel->lebel, temp_lebel->lebel))
 					fprintf(name_file, "%s\t%04d\n", fnd_lebel->lebel, fnd_lebel->line);
-				
+
 				fnd_lebel = fnd_lebel->next;
 			}
 			/* return fnd back to the start. */
@@ -223,13 +224,13 @@ void printObjectFile(FILE* file_name)
 	fprintf(file_name, "\t\t\t\t%d\t%d\n", ICF, DCF);
 	while (temp)
 	{
-		
+
 		if (temp->is_instruction)
-			fprintf(file_name, "%04d\t%04X\t%c", temp->address, temp->bcode->allBits, temp->are);
-		
+			fprintf(file_name, "%04d\t%04X\t%c", temp->address, temp->bcode.allBits, temp->are);
+
 		else
-			fprintf(file_name, "%04d\t%01X%01X%01X\t%c", temp->address, temp->bcode->separateBits.opcode, temp->bcode->separateBits.func, addTargetToSource(temp), temp->are);
-		
+			fprintf(file_name, "%04d\t%01X%01X%01X\t%c", temp->address, temp->bcode.separateBits.opcode, temp->bcode.separateBits.func, addTargetToSource(temp), temp->are);
+
 		temp = temp->next;
 	}
 
@@ -241,14 +242,14 @@ void printObjectFile(FILE* file_name)
 int addTargetToSource(const Line* node)
 {
 	int res = 0;
-	res += (node->bcode->separateBits.source);
+	res += (node->bcode.separateBits.source);
 
-	if (node->bcode->separateBits.target == 1)
+	if (node->bcode.separateBits.target == 1)
 		res += 4;
-	if (node->bcode->separateBits.target == 2)
+	if (node->bcode.separateBits.target == 2)
 		res += 8;
-	if (node->bcode->separateBits.target == 3)
+	if (node->bcode.separateBits.target == 3)
 		res += 12;
-	
+
 	return res;
 }

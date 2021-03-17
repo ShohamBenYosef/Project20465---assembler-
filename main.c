@@ -14,7 +14,7 @@
 int main(int argc, char* argv[])
 {
 	FILE* fp;
-	int succsses = 0;/* דגל לבדיקה אם היו איזשהן תקלות בסיבוב הראשון*/
+	int succsses = 0;
 
 	if (argc >= 2)
 	{
@@ -22,12 +22,12 @@ int main(int argc, char* argv[])
 		{
 			open_file(*++argv,MainFileEnding, "r");
 
-			succsses= assembler_rd1(); /* ROUND 1*/   /*סיבוב ראשון*/
+			succsses= parse();
 			close_file(full_file_name, MainFileEnding);
 			if (succsses)
 			{
 				printf("round 1 works successfuly.\n");
-				/*succsses = assembler_rd2() /* ROUND 2 */  /* סיבוב שני*/
+				succsses = parse2();
 				if (succsses)
 					printf("file assembled.");
 				else {

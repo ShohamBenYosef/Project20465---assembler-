@@ -8,9 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-FILE* fp;
 
-FILE* open_file(const char* file_name,char* ending, char* mod)
+
+FILE* open_file(const char* file_name, char* ending, char* mod)
 {
 	char* temp_name = (char*)malloc((strlen(file_name) + 4));
 
@@ -39,7 +39,7 @@ char* runOnLine()
 	int line_length = MAX_LINE_LENGTH;
 	int current_pos = 0;
 	char* line = (char*)malloc(line_length);
-	
+
 	if (!line)
 		fatal_error(ErrorMemoryAlloc);
 
@@ -65,7 +65,7 @@ char* runOnLine()
 	line[current_pos - 1] = '\0';
 	return line;
 }
-
+/*
 char* read_word(const char* line, const int line_num, FILE* fp)
 {
 	int word_length;
@@ -88,7 +88,7 @@ char* read_word(const char* line, const int line_num, FILE* fp)
 	{
 		curr_char_index++;
 		curr_char = line[curr_char_index];
-	} /* end of while */
+	}
 
 	while (IsBlank(curr_char))
 	{
@@ -99,7 +99,7 @@ char* read_word(const char* line, const int line_num, FILE* fp)
 	curr_word_index++;
 
 
-	/**/
+
 	word_char = 0;
 	while (curr_char != '\0' && !IsBlank(curr_char))
 	{
@@ -113,7 +113,7 @@ char* read_word(const char* line, const int line_num, FILE* fp)
 		curr_char_index++;
 		curr_char++;
 		curr_char = line[curr_char_index];
-	}/* end of while */
+	}
 
 	curr_word[word_char] = '\0';
 
@@ -135,5 +135,5 @@ void close_file(const char* file_name, char* ending)
 
 	fclose(full_file_name);
 	free(full_file_name);
-	
+
 }

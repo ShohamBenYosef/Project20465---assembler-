@@ -2,6 +2,9 @@
 * error.h
 */
 
+#ifndef ERROR_H_
+#define ERROR_H_
+
 /* list of common errors:  */
 #define ErrorMaxLengthLine "there is to many characters in this line."
 #define ErrorMissingArgument "Missing argument."
@@ -19,3 +22,5 @@ void fatal_error(const char* message);
 * Prints an error message and adds 1 to the error counter
 */
 void error_log(char* msg, int line);
+
+#endif

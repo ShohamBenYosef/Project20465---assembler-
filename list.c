@@ -19,7 +19,7 @@ Line* newLineNode(Line* node, int line, int instruction, char ARE);
 
 /* add */
 
-Line* addToMainList( Line* main_list_head, Line* new_node)
+Line* addToMainList(Line* main_list_head, Line* new_node)
 {
 	Line* temp;
 
@@ -86,17 +86,18 @@ void freeLineList(Line* head)
 	return;
 } /* end of func */
 
+
 /* search*/
 
-Lebel*  searchInLebelList(Lebel* head, char* lebel)
+Lebel* searchInLebelList(Lebel* head, char* lebel)
 {
 	Lebel* temp = head;
 
 	while (temp)
 	{
-		if (!_copmare(lebel, temp->lebel))
+		if (!strcmp(lebel, temp->lebel))
 			return temp->lebel;
-	
+
 		temp = temp->next;
 	}
 	return NULL;
@@ -108,7 +109,7 @@ Line* searchInMainList(Line* head, char* lebel)
 
 	while (temp)
 	{
-		if (!_copmare(lebel, temp->lebel))
+		if (!strcmp(lebel, temp->lebel))
 			return temp->lebel;
 
 		temp = temp->next;
@@ -129,6 +130,6 @@ Line* newLineNode(Line* node, int line, int instruction, char ARE)
 	node->is_instruction = instruction;
 	node->are = ARE;
 	node->bcode.allBits = 0;
-	node->next = NULL
+	node->next = NULL;
 
 }

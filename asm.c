@@ -20,7 +20,7 @@ extern main_list_head, lebel_list_head;
 /* DATA*/
 Line extract_data(char* word, int const line_num)
 {
-	int param_count = 0, comma_count = 0; 
+	int param_count = 0, comma_count = 0;
 	long data_num;
 	short its_negative = 0;
 	Line* node;
@@ -35,16 +35,16 @@ Line extract_data(char* word, int const line_num)
 		/* if the argument is empty. */
 		if (*word == '\0' && param_count == 0)
 			error_log("Error, There is no data", line_num);
-		
+
 		/* illigal characters and words */
 		if (!isdigit(*word) && *word != '+' && *word != '-') {
 			error_log("Error, The line contain illegal number.", line_num);
 			continue;
 		}
-		
+
 		word++;
 
-		while (!isblank(*word) && *word != '\0' && *word !=',')
+		while (!isblank(*word) && *word != '\0' && *word != ',')
 		{
 			if (*word == '-')
 				its_negative = 1; /* flag */
@@ -66,9 +66,9 @@ Line extract_data(char* word, int const line_num)
 		DC++; /* the actual address*/
 		newLineNode(node, DC, 1, 'A');
 		node->lebel = NULL;
-		node->bcode->allBits = data_num;
+		node->bcode.allBits = data_num;
 
-		addToList(main_list_head, node);
+		addToMainList(main_list_head, node);
 
 		nextWord(*word);
 
@@ -78,7 +78,7 @@ Line extract_data(char* word, int const line_num)
 			comma_count++;
 		}
 	}/* End of first while*/
-	
+
 	if (comma_count != (param_count - 1)) {
 		error_log("Error, there are too many commas", line_num);
 	}
@@ -94,12 +94,12 @@ Line* extract_string(char* word, int const line_num, char* line)
 
 	/* check if its realy string */
 	if (*word != '"') {
-		error_set("Error, there's no string ", line_num);
+		error_log("Error, there's no string ", line_num);
 		return main_list_head;
 	}
 
 	curr_char = line + strlen(line) - 1; /* current_char is now on the end of the currect line. */
-	
+
 	while (isBlank(curr_char)) curr_char--; /* set the pointer on the end of the string. */
 
 	if (*(curr_char) != '"' || curr_char == word) { /* check if there is an argument. and if its string */
@@ -113,25 +113,25 @@ Line* extract_string(char* word, int const line_num, char* line)
 		/* */
 		newLineNode(node, DC, 1, 'A');
 		node->lebel = NULL;
-		node->bcode->allBits = *(word + 1);
-		
-		addToList(main_list_head, node);
-		
+		node->bcode.allBits = *(word + 1);
+
+		addToMainList(main_list_head, node);
+
 		word++;
 	} /* end of while */
 	/* for '\0'  char. */
 	DC++;
-	
+
 	newLineNode(node, DC, 1, 'A');
 	node->lebel = NULL;
-	node->bcode->allBits = '0';
-	
-	addToList(main_list_head, node);
-	
+	node->bcode.allBits = 0;
+
+	addToMainList(main_list_head, node);
+
 	return main_list_head;
 }
 /* Ext and Ent */
-void extract_lebel(char* word, char* curr_char, int const line_num, char* line,Attributes type)
+void extract_lebel(char* word, char* curr_char, int const line_num, char* line, Attributes type)
 {
 	Lebel* lebel;
 	word = curr_char;
@@ -156,9 +156,9 @@ void extract_lebel(char* word, char* curr_char, int const line_num, char* line,A
 	lebel->lebel = (char*)malloc(MAX_LINE_LENGTH + 1);
 	if (!lebel->lebel)
 		fatal_error(ErrorMemoryAlloc);
-	
+
 	strcpy(lebel->lebel, word);
-	if (getLineLebel(lebel->lebel,line_num))
+	if (getLineLebel(lebel->lebel, line_num))
 	{
 		/*Attributes*/
 		if (type == externType)
@@ -177,12 +177,12 @@ void extract_lebel(char* word, char* curr_char, int const line_num, char* line,A
 }
 
 /* check if the line start with 'LEBEL:' */
-char*  getLineLebel(char* line, int line_num)
+char* getLineLebel(char* line, int line_num)
 {
 	int length = 0;
 	char* lebel;
 	const char* temp = line;
-	
+
 	lebel = (char*)malloc(MAX_LINE_LENGTH + 1);
 	if (!lebel)
 		fatal_error(ErrorMemoryAlloc);
@@ -196,7 +196,7 @@ char*  getLineLebel(char* line, int line_num)
 		temp++;
 		length++;
 	}
-	
+
 	if (line[length] == ':') {
 		strncpy(lebel, line, length);
 		lebel[length] = '\0';
@@ -224,8 +224,8 @@ int check_valid_lebel(char* lebel, int line_num)
 	}
 	if (word != ':')
 	{
-			error_log("Error, illigal char in lebel ", line_num);
-			return 0;
+		error_log("Error, illigal char in lebel ", line_num);
+		return 0;
 	}
 	return 1;
 }
@@ -233,30 +233,28 @@ int check_valid_lebel(char* lebel, int line_num)
 int parse()
 {
 	/* 1 */
-	IC = 99, DC = 0; 
-	
-	Lebel* lebel; /* Lebel line */
-	
-	Line* node; /* main node line */
-	
-	char* line; /*hod the string line*/
-	
-	int line_num=0; /* line count */
+	IC = 99, DC = 0;
 
-	char operand1[MAX_LINE_LENGTH + 1], opernad2[MAX_LINE_LENGTH + 1];
-	
+	Lebel* lebel; /* Lebel line */
+
+	Line* node; /* main node line */
+
+	char* line; /*hod the string line*/
+
+	int line_num = 0; /* line count */
+
 	/* pointer that help us to 'run' on the line*/
 	char* word, * curr_char;
-	
+
 	/* nodes for the lists - main and symbol. */
-	Lebel* symbol_node = NULL; 
+	Lebel* symbol_node = NULL;
 	Line* main_node = NULL;
 
 	int lebel_flag = 0, index = 0;
-	
+
 	/* command type */
 	char cmd_type[NUM_OF_REG];
-	int commandNum= 0;
+	int commandNum = 0;
 
 
 	/* check if there is a line */
@@ -313,7 +311,7 @@ int parse()
 				lebel->line = DC + 1;
 				lebel->type = dataType;
 				/* Add the label to the labels list. */
-				addToList(lebel_list_head, lebel); /* check if its alredy in the list    T0D0 or change "CreateAndaddtolist" */
+				addToSymbolList(lebel_list_head, lebel); /* check if its alredy in the list    T0D0 or change "CreateAndaddtolist" */
 			}
 			/* if its symbol line*/
 			/*7*/
@@ -357,23 +355,23 @@ int parse()
 			if (lebel->lebel) {
 				lebel->type = codeType;
 				lebel->line = DC + 1;
-				addToList(lebel_list_head , lebel); /* check if its alredy in the list    T0D0 or change "CreateAndaddtolist" */
+				addToSymbolList(lebel_list_head, lebel); /* check if its alredy in the list    T0D0 or change "CreateAndaddtolist" */
 			}
 
 			/* check if too much */
 			if (strlen(line) > MAX_LINE_LENGTH) {
-				error_set("Error, Line length is over 81 characters.\n", line_num);
+				error_log("Error, Line length is over 81 characters.\n", line_num);
 				continue;
 			}
 			/****************************************************************
 			*******************************************************************/
 			/* cmp the command with */
 			commandNum = typeOfCommand(*word);
-			
+
 			/* start to build the binary opcode*/
 			/* need to add more thing to the bit field. - mayby we should usee more func..-----------------------------------*/
-			node->bcode = commands[index];
-			
+
+
 			/* to do V----------------------------------------------------------------------------------------------------------*/
 			/* Find '/0' or /1 , assuming /0 is not followed by other options. */
 			nextWord(curr_char);
