@@ -1,4 +1,4 @@
-
+#include "utils.h"
 #include "asm.h"
 #include "file.h"
 #include "error.h"
@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <ctype.h> /*for alphanomeric*/
 #include <string.h>
+
+#pragma warning(disable : 4996)
 
 
 int DCF, ICF; /* save DC and IC for the second round. */
@@ -21,7 +23,7 @@ extern main_list_head, lebel_list_head;
 Line extract_data(char* word, int const line_num)
 {
 	int param_count = 0, comma_count = 0;
-	long data_num;
+	long data_num = 0;
 	short its_negative = 0;
 	Line* node;
 	char* first_char;
@@ -44,7 +46,7 @@ Line extract_data(char* word, int const line_num)
 
 		word++;
 
-		while (!isblank(*word) && *word != '\0' && *word != ',')
+		while (!IsBlank(*word) && *word != '\0' && *word != ',')
 		{
 			if (*word == '-')
 				its_negative = 1; /* flag */
@@ -64,13 +66,13 @@ Line extract_data(char* word, int const line_num)
 			data_num = (MAX_DATA_NUM - data_num); /* Complement 2 */
 		}
 		DC++; /* the actual address*/
-		newLineNode(node, DC, 1, 'A');
+		newLineNode(&node, DC, 1, 'A');
 		node->lebel = NULL;
 		node->bcode.allBits = data_num;
 
 		addToMainList(main_list_head, node);
 
-		nextWord(*word);
+		NextWord(*word);
 
 		if (*word == ',')
 		{
@@ -90,7 +92,7 @@ Line* extract_string(char* word, int const line_num, char* line)
 	Line* node;
 	char* curr_char;
 	/* move to start*/
-	nextWord(word);
+	NextWord(word);
 
 	/* check if its realy string */
 	if (*word != '"') {
@@ -100,7 +102,7 @@ Line* extract_string(char* word, int const line_num, char* line)
 
 	curr_char = line + strlen(line) - 1; /* current_char is now on the end of the currect line. */
 
-	while (isBlank(curr_char)) curr_char--; /* set the pointer on the end of the string. */
+	while (IsBlank(curr_char)) curr_char--; /* set the pointer on the end of the string. */
 
 	if (*(curr_char) != '"' || curr_char == word) { /* check if there is an argument. and if its string */
 		error_log("Error, String expected after \".string\".\n", line_num);
@@ -111,7 +113,7 @@ Line* extract_string(char* word, int const line_num, char* line)
 	{
 		DC++; /* the actual address*/
 		/* */
-		newLineNode(node, DC, 1, 'A');
+		newLineNode(&node, DC, 1, 'A');
 		node->lebel = NULL;
 		node->bcode.allBits = *(word + 1);
 
@@ -122,7 +124,7 @@ Line* extract_string(char* word, int const line_num, char* line)
 	/* for '\0'  char. */
 	DC++;
 
-	newLineNode(node, DC, 1, 'A');
+	newLineNode(&node, DC, 1, 'A');
 	node->lebel = NULL;
 	node->bcode.allBits = 0;
 
@@ -148,11 +150,11 @@ void extract_lebel(char* word, char* curr_char, int const line_num, char* line, 
 	/* set pointer to the end of line and the move to*/
 	curr_char = word;
 
-	while (!isBlank(curr_char))
+	while (!IsBlank(curr_char))
 		curr_char++;
 
 	/* build the node of lebel */
-	newLebel(lebel);
+	NewLebelNode(lebel);
 	lebel->lebel = (char*)malloc(MAX_LINE_LENGTH + 1);
 	if (!lebel->lebel)
 		fatal_error(ErrorMemoryAlloc);
@@ -230,7 +232,7 @@ int check_valid_lebel(char* lebel, int line_num)
 	return 1;
 }
 
-int parse()
+int parse(FILE* fp)
 {
 	/* 1 */
 	IC = 99, DC = 0;
@@ -258,7 +260,7 @@ int parse()
 
 
 	/* check if there is a line */
-	while (line = runOnLine()) /* 2*/
+	while (line = runOnLine(fp)) /* 2*/
 	{
 		line_num++;
 
@@ -269,7 +271,7 @@ int parse()
 		{
 
 			/* get the lebel of the line */
-			NewLabelNode(lebel);
+			NewLebelNode(lebel);
 			lebel->lebel = getLineLebel(line, line_num);
 			if (lebel->lebel) /* if its lebel */
 				lebel_flag = check_valid_lebel(lebel->lebel, line_num);
@@ -277,7 +279,7 @@ int parse()
 
 
 			word = line;
-			nextWord(word);
+			NextWord(word);
 
 			/* Empty line. */
 			if (*word == '\0')
@@ -344,10 +346,8 @@ int parse()
 			/* need to add func to check if the lebel is alredy exist in the list---------*/
 
 			IC++;
-			newMainNode(node);
-			node->address = IC;
+			newLineNode(&node, IC, 0, 'A');
 			node->lebel = lebel;
-			node->are = 'A';
 
 			/*add to symbol table */
 			/* need to add func to check if the lebel is alredy exist in the list*/
@@ -366,7 +366,7 @@ int parse()
 			/****************************************************************
 			*******************************************************************/
 			/* cmp the command with */
-			commandNum = typeOfCommand(*word);
+			/*commandNum = typeOfCommand(*word);*/
 
 			/* start to build the binary opcode*/
 			/* need to add more thing to the bit field. - mayby we should usee more func..-----------------------------------*/
@@ -374,14 +374,14 @@ int parse()
 
 			/* to do V----------------------------------------------------------------------------------------------------------*/
 			/* Find '/0' or /1 , assuming /0 is not followed by other options. */
-			nextWord(curr_char);
+			NextWord(curr_char);
 			/* jmp to the start of the next word and Check what is the cmd*/
 			cmd_type[0] = *curr_char;
 
 			if (*curr_char != '\0')
 			{
 				curr_char++;
-				nextWord(curr_char);
+				NextWord(curr_char);
 
 				cmd_type[1] = *curr_char;
 				curr_char[2] = '\0';
@@ -408,7 +408,7 @@ int parse()
 	DCF = DC;
 
 	/* 19 */
-	update_line_in_symbol_list();/* to do*/
+	/*update_line_in_symbol_list(); to do*/
 
 	return 1;
 	/* 17 */

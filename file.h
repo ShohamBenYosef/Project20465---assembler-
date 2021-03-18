@@ -1,41 +1,78 @@
-#ifndef FILE_H_
-#define FILE_H_
+#ifndef LIST_H_
+#define LIST_H_
 
-#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include "error.h"
-#include "list.h"
 
-#define MainFileEnding ".as"
-#define ObjectFileEnding ".ob"
-#define ExternFileEnding ".ext"
-#define EntryFileEnding ".ent"
+extern fp;
 
-#define MAX_LINE_LENGTH 81
 
-/*name of the main file! */
-char* full_file_name;
+/* enum for Attributes field in the symbol table/list. */
+typedef enum {
 
-/*
-* open a file
-* save pointer to the file (full_file_name).
-*  - modolary
+	codeType,
+	dataType,
+	externType,
+	entryType
+
+} Attributes;
+
+
+/**
+* Hold the 12 bits in bit field
 */
-FILE* open_file(const char* file_name, char* ending, char* mod);
+typedef struct {
+	unsigned int source : 2;
+	unsigned int target : 3;
+	unsigned int func : 4;
+	unsigned int opcode : 4;
+} MachineCodeBit;
+
+
+/**
+* Union That hold the 12 bits.
+* if its instruction so the bits hold together.
+*/
+typedef struct {
+	union
+	{
+		MachineCodeBit separateBits;
+		unsigned int allBits : 12;
+	};
+} MachineCode;
+
+
+/**
+* node for the main table - node is a "line".
+*/
+typedef struct Line {
+	char* lebel;
+	int address;
+	MachineCode bcode;
+	int is_instruction;
+	char are;
+	struct Line* next;
+}Line;
 
 /**
 *
 */
-char* runOnLine();
+typedef struct {
+	char* lebel;
+	int line; /* decimal*/
+	Attributes type;
+	struct Lebel* next;
+}Lebel;
 
-/**
-* Collect the next word.
-*/
-char* read_word(const char* line, const int line_num, FILE* fp);
 
+Line* addToMainList(Line* main_list_head, Line* new_node);
+Lebel* addToSymbolList(Lebel* lebel_list_head, Lebel* new_node);
+void freeLebelList(Lebel* head);
+void freeLineList(Line* head);
+Lebel* searchInLebelList(Lebel* head, char* lebel);
+Line* searchInMainList(Line* head, char* lebel);
+Line* newLineNode(Line* node, int line, int instruction, char ARE);
 
 #endif
-
-/*
-* closing  file with a given ending . (full_file_name)
-*/
-void close_file(const char* file_name, char* ending);

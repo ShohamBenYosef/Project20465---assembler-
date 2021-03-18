@@ -2,16 +2,18 @@
 * file.c
 */
 #pragma warning(disable : 4996)
+#pragma warning(disable : 6001)
 
 #include "file.h"
 #include "error.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "utils.h"
 
 
 FILE* open_file(const char* file_name, char* ending, char* mod)
 {
+	FILE* inputFile;
 	char* temp_name = (char*)malloc((strlen(file_name) + 4));
 
 	if (!temp_name)
@@ -20,8 +22,8 @@ FILE* open_file(const char* file_name, char* ending, char* mod)
 	strcpy(temp_name, file_name);
 	strcat(temp_name, ending);
 
-	fp = fopen(temp_name, mod);
-	if (!fp)
+	inputFile = fopen(temp_name, mod);
+	if (!inputFile)
 	{
 		fprintf(stderr, ErrorCantRead, temp_name);
 		fprintf(stderr, "\n");
@@ -30,10 +32,10 @@ FILE* open_file(const char* file_name, char* ending, char* mod)
 	}
 
 	free(temp_name);
-	return fp;
+	return inputFile;
 }
 
-char* runOnLine()
+char* runOnLine(FILE* fp)
 {
 	/* build array for each line. */
 	int line_length = MAX_LINE_LENGTH;
@@ -126,14 +128,14 @@ char* read_word(const char* line, const int line_num, FILE* fp)
 
 void close_file(const char* file_name, char* ending)
 {
-	char* full_file_name = (char*)malloc((strlen(file_name) + 4));
-	if (!full_file_name)
+	char* full_name = (char*)malloc((strlen(file_name) + 4));
+	if (!full_name)
 		fatal_error(ErrorMemoryAlloc);
 
-	strcpy(full_file_name, file_name);
-	strcat(full_file_name, ending);
+	strcpy(full_name, file_name);
+	strcat(full_name, ending);
 
-	fclose(full_file_name);
-	free(full_file_name);
+	fclose(full_name);
+	free(full_name);
 
 }

@@ -1,7 +1,7 @@
 /**
 * error.c
 */
-
+#include "utils.h"
 #include "error.h"
 #include "file.h"
 #include <stdio.h>
@@ -15,6 +15,6 @@ void fatal_error(const char* message) {
 
 void error_log(char* msg, int line) {
 
-	printf(stderr, "%s; The error is on line %d in %s\n", msg, line, full_file_name);
+	printf(stderr, "%s; The error is on line %d\n", msg, line);
 	errors_count++;
 }

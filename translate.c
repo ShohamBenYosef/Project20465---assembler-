@@ -4,6 +4,7 @@
 */
 
 #include "asm.h"
+#include "utils.h"
 #include "file.h"
 #include "error.h"
 #include "list.h"

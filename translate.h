@@ -7,6 +7,10 @@
 #include <stdio.h>
 #include "file.h"
 #include "error.h"
+#include "utils.h"
+
+enum { objectFile, externFile, entryFile };
+
 
 
 /***

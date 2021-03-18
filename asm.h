@@ -1,29 +1,24 @@
 #ifndef ASM_H_
 #define ASM_H_
 
-
+#include "list.h"
 #include <stdio.h>
 #include "file.h"
 #include "error.h"
-
-
-#define NUM_OF_COMMANDS 16
-#define MAX_DATA_NUM 4096
-#define NUM_OF_REG 7
-
-
-#define IsBlank(c) ((c) == ' ' || (c) == '\t')
-#define NextWord(x) while (IsBlank(*(x))) (x)++ 
+#include "utils.h"
 
 
 /* build new lebel node */
-#define NewLebelNode(_node) _label = (Label*)malloc(sizeof(Label));\
-	if (!_label) error_fatal(ErrorMemoryAlloc);\
-	_label->label = (char*)malloc(sizeof(chaar);\
+#define NewLebelNode(_lebel) _lebel = (Lebel*)malloc(sizeof(Lebel));\
+	if (!_lebel) fatal_error(ErrorMemoryAlloc);\
+	_lebel->lebel = (char*)malloc(sizeof(char));\
 	if(!lebel) fatal_error(ErrorMemoryAlloc);\
-	_label->line = 0;\
-	_lebel->type = 0:\
+	_lebel->line = 0;\
+	_lebel->type = 0;\
 	_lebel->next = NULL;
+
+
+
 
 
 char* tempWord[MAX_LINE_LENGTH];

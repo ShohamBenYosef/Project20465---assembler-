@@ -6,7 +6,7 @@
 #include "error.h"
 #include <stdlib.h>
 #include <stdio.h>
-
+#include "utils.h"
 
 
 
@@ -22,12 +22,12 @@ int main(int argc, char* argv[])
 		{
 			open_file(*++argv,MainFileEnding, "r");
 
-			succsses= parse();
+			succsses= parse(fp); /* ROUND 1*/   /*סיבוב ראשון*/
 			close_file(full_file_name, MainFileEnding);
 			if (succsses)
 			{
 				printf("round 1 works successfuly.\n");
-				succsses = parse2();
+				succsses = parse2(fp);
 				if (succsses)
 					printf("file assembled.");
 				else {

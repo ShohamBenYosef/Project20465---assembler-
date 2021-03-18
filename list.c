@@ -3,7 +3,10 @@
 #include <ctype.h>
 #include "list.h"
 #include "error.h"
+#include "utils.h"
 
+Lebel* lebel_list_head;
+Line* main_list_head;
 
 
 /*func*/
@@ -133,3 +136,4 @@ Line* newLineNode(Line* node, int line, int instruction, char ARE)
 	node->next = NULL;
 
 }
+

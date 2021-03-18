@@ -6,44 +6,33 @@
 #include <ctype.h>
 #include "error.h"
 
+extern fp;
+
 
 /* enum for Attributes field in the symbol table/list. */
-typedef enum{
+typedef enum {
 
 	codeType,
 	dataType,
 	externType,
-	entryType 
+	entryType
 
 } Attributes;
 
-/* for symbol table - for define. */
-typedef struct LebelList
-{
-	struct Lebel* lebel_list_head;
-}LebelList;
-
-/* for main table - for define. */
-typedef struct MainList
-{
-	struct Line* main_list_head;
-}MainList;
-
-
 
 /**
-* Hold the 12 bits in bit field 
+* Hold the 12 bits in bit field
 */
 typedef struct {
-		unsigned int source : 2;
-		unsigned int target : 3;
-		unsigned int func : 4;
-		unsigned int opcode : 4;
+	unsigned int source : 2;
+	unsigned int target : 3;
+	unsigned int func : 4;
+	unsigned int opcode : 4;
 } MachineCodeBit;
 
 
 /**
-* Union That hold the 12 bits. 
+* Union That hold the 12 bits.
 * if its instruction so the bits hold together.
 */
 typedef struct {
@@ -68,7 +57,7 @@ typedef struct Line {
 }Line;
 
 /**
-* 
+*
 */
 typedef struct {
 	char* lebel;
