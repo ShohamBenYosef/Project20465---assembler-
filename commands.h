@@ -17,10 +17,10 @@ typedef struct
 
 typedef enum
 {
-	IMMEDIATE_OPR,
-	SYMBOL_OPR
-	RELATIVE_OPR,
-	REGISTER_OPR
+	immediateNum,
+	SymbolOperand
+	RealativeOperand,
+	RegisterOperand
 } operandType;
 
 typedef struct
@@ -47,5 +47,3 @@ typedef struct
 	operand secondOperand; /* destination operand */
 	int address; /* the address of command */
 } command;
-
-
