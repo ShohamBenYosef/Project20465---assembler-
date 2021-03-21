@@ -76,18 +76,18 @@ typedef struct
 
 
 
-command parseCommand(char* line);
+command parseCommand(char* line,const int line_num);
 
-operand getFirstOperand(char* currentChar);
+operand getFirstOperand(char* currentChar,const int line_num);
 
-int typeOfCommand(char* word);
+int typeOfCommand(char* word,const int line_num);
 
-operand parseOperand(char* currentChar);
+operand parseOperand(char* currentChar,const int line_num);
 
-operand getSecondOperand(char* line);
+operand getSecondOperand(char* line,const int line_num);
 
 /*void pushCommandToTable(command lineCommand, Line newLine, int addres);*/
 
-int checkOperands(const command* newCommand);
+int checkOperands(const command* newCommand,const int line_num);
 
 #endif
