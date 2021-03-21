@@ -11,17 +11,17 @@
 extern file;
 
 
-command parseCommand(char* line);
+command parseCommand(char* line,const int line_num);
 
-int typeOfCommand(char* word);
+int typeOfCommand(char* word,const int line_num);
 
-operand getFirstOperand(char* line);
+operand getFirstOperand(char* line,const int line_num);
 
-operand getSecondOperand(char* line);
+operand getSecondOperand(char* line,const int line_num);
 
-operand parseOperand(char* line);
+operand parseOperand(char* line,const int line_num);
 
-int checkOperands(const command* newCommand);
+int checkOperands(const command* newCommand,const int line_num);
 
 void pushCommandToTable(command lineCommand, Line newLine, int addres);
 
@@ -45,16 +45,20 @@ const CommandsType commandTypes[numOfcommands] = {
 };
 
 
-/*
-void pushCommandToTable(command lineCommand, Line newLine, int addres)
+
+void pushCommandToTable(command lineCommand, Line newLine, int addres,int ic)
 {
+    
+    /*build first word*/
 	newLine.bcode.separateBits.func = commandsTypes[lineCommmand.numOfCommand].funct;
 	newLine.bcode.separateBits.opcode = lineCommmand.numOfCommand;
 	newLine.bcode.separateBits.source = lineCommmand.firstOperand.type;
 	newLine.bcode.separateBits.target = lineCommmand.secondOperand.type;
+	/*check if there is another words*/
+	
 }
-*/
-int typeOfCommand(char* word)
+
+int typeOfCommand(char* word,const int line_num)
 {
     int i;
 	char commandForCheck[lengthOfCommands];
@@ -74,7 +78,7 @@ int typeOfCommand(char* word)
 	return -1;
 }
 
-operand parseOperand(char* line)
+operand parseOperand(char* line, int line_num)
 {
 
 	{
@@ -103,17 +107,17 @@ operand parseOperand(char* line)
 					if (!isdigit(line[j]))
 					{
 						
-						fatal_error("there isn't a legal operand");
+						error_log("there isn't a legal operand",line_num);
 						return opr; 
 					}
 				}
 				opr.type = immediateOperand;
 				opr.operandValue.immediateNum = atoi(&line[i]);
-				printf("this is an imidate operande");
+				printf("this is an imidate operande",line_num);
 				return opr;
 			}
 			
-			fatal_error("there isn't a legal operand");
+			error_log("there isn't a legal operand",line_num);
 			return;
 		}
 
@@ -122,7 +126,7 @@ operand parseOperand(char* line)
 		{
 			if (!isalpha(line[i + 1]))
 			{
-				fatal_error("there isn't a legal operand");
+				error_log("there isn't a legal operand",line_num);
 				return opr;
 			}
 
@@ -131,7 +135,7 @@ operand parseOperand(char* line)
 			{
 				if (!isalpha(line[j]) && !isdigit(line[j]))
 				{
-					fatal_error("there isn't a legal operand");
+					error_log("there isn't a legal operand",line_num);
 					return opr;
 				}
 			}
@@ -158,7 +162,7 @@ operand parseOperand(char* line)
 		/*if its can be a symbol */
 		if (!isalpha(line[i]))
 		{
-			fatal_error("there isn't a legal operand");
+			error_log("there isn't a legal operand",line_num);
 			return opr;
 		}
 
@@ -167,7 +171,7 @@ operand parseOperand(char* line)
 		{
 			if (!isalpha(line[j]) && !isdigit(line[j]))
 			{
-				fatal_error("there isn't a legal operand");
+				error_log("there isn't a legal operand",line_num);
 				return opr;
 			}
 		}
@@ -180,7 +184,7 @@ operand parseOperand(char* line)
 }
 
 
-operand getFirstOperand(char* line)
+operand getFirstOperand(char* line, int line_num)
 {
     char* operandStr;
 	operand opr;
@@ -199,7 +203,7 @@ operand getFirstOperand(char* line)
 
 	if (line[i] == '\0')
 	{
-		error("there is no opreand after command");
+		error("there is no opreand after command",line_num);
 		
 
 	}
@@ -214,20 +218,20 @@ operand getFirstOperand(char* line)
 
 	if (line[i] == '\0')
 	{
-		fatal_error("Required operand not found");
+		error_log("Required operand not found",line_num);
 		
 	}
 
 
 
 
-	printf("sending to parse\n");
+	printf("sending to parse\n",line_num);
 	operandStr = (char*)malloc(sizeof(char) * (operandLength + 1));
 
 	strncpy(operandStr, &line[i - operandLength], operandLength);
 	operandStr[operandLength] = '\0';
 
-	opr = parseOperand(operandStr);
+	opr = parseOperand(operandStr, line_num);
 
 	free(operandStr);
 
@@ -235,7 +239,7 @@ operand getFirstOperand(char* line)
 
 }
 
-operand get_second_operand(char* line)
+operand get_second_operand(char* line, int line_num)
 {
 	operand opr;
 	int i;
@@ -252,11 +256,11 @@ operand get_second_operand(char* line)
 
 	if (line[i] == '\0')
 	{
-		fatal_error("there is need to be second opernd");
+		error_log("there is need to be second opernd",line_num);
 		return opr;
 	}
 
-	return parseOperand(&line[i + 1]);
+	return parseOperand(&line[i + 1],line_num);
 }
 /*
 int checkOperands(const command* newCommand)
