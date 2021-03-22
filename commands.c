@@ -11,83 +11,84 @@
 extern file;
 
 
-command parseCommand(char* line,const int line_num);
-
-int typeOfCommand(char* word,const int line_num);
-
-operand getFirstOperand(char* line,const int line_num);
-
-operand getSecondOperand(char* line,const int line_num);
-
-operand parseOperand(char* line,const int line_num);
-
-int checkOperands(const command* newCommand,const int line_num);
-
-void pushCommandToTable(command lineCommand, Line newLine, int addres);
-
 const CommandsType commandTypes[numOfcommands] = {
-	{"mov", 0, 0, 2, 1, 1, 0, 1, 0, 1, 0, 1},
-	{"cmp", 1, 0, 2, 1, 1, 0, 1, 1, 1, 0, 1},
-	{"add", 2, 1, 2, 1, 1, 0, 1, 0, 1, 0, 1},
-	{"sub", 2, 2 ,2, 1, 1, 0, 1, 0, 1, 0, 1},
-	{"lea", 4, 0 ,2, 0, 1, 0, 0, 0, 1, 0, 1},
-	{"clr", 5, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"not", 5, 2, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"inc", 5, 3, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"dec", 5, 4, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"jmp", 9, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0},
-	{"bne", 9, 2, 1, 0, 0, 0, 0, 0, 1, 1, 0},
-	{"jsr", 9, 3, 1, 0, 0, 0, 0, 0, 1, 1, 0},
-	{"red", 12, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-	{"prn", 13, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1},
-	{"rts", 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{"stop", 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	{"mov", 0, 0, 2, {1, 1, 0, 1}, {0, 1, 0, 1} },
+	{"cmp", 1, 0, 2, {1, 1, 0, 1}, {1, 1, 0, 1}},
+	{"add", 2, 1, 2, {1, 1, 0, 1}, {0, 1, 0, 1}},
+	{"sub", 2, 2 ,2, {1, 1, 0, 1}, {0, 1, 0, 1}},
+	{"lea", 4, 0 ,2, {0, 1, 0, 0}, {0, 1, 0, 1}},
+	{"clr", 5, 1, 1, {0, 0, 0, 0}, {0, 1, 0, 1}},
+	{"not", 5, 2, 1, {0, 0, 0, 0}, {0, 1, 0, 1}},
+	{"inc", 5, 3, 1, {0, 0, 0, 0}, {0, 1, 0, 1}},
+	{"dec", 5, 4, 1, {0, 0, 0, 0}, {0, 1, 0, 1}},
+	{"jmp", 9, 1, 1, {0, 0, 0, 0}, {0, 1, 1, 0}},
+	{"bne", 9, 2, 1, {0, 0, 0, 0}, {0, 1, 1, 0}},
+	{"jsr", 9, 3, 1, {0, 0, 0, 0}, {0, 1, 1, 0}},
+	{"red", 12, 0, 1,{ 0, 0, 0, 0}, {0, 1, 0, 1}},
+	{"prn", 13, 0, 1,{ 0, 0, 0, 0}, {1, 1, 0, 1}},
+	{"rts", 14, 0, 0,{ 0, 0, 0, 0}, {0, 0, 0, 0}},
+	{ "stop", 15, 0, 0,{ 0, 0, 0, 0}, {0, 0, 0, 0 }}
 };
 
 
-
-void pushCommandToTable(command lineCommand, Line newLine, int addres,int ic)
+/*
+int pushCommandToTable(command newCommand, Line newLine, int address)
 {
-    
-    /*build first word*/
-	newLine.bcode.separateBits.func = commandsTypes[lineCommmand.numOfCommand].funct;
-	newLine.bcode.separateBits.opcode = lineCommmand.numOfCommand;
-	newLine.bcode.separateBits.source = lineCommmand.firstOperand.type;
-	newLine.bcode.separateBits.target = lineCommmand.secondOperand.type;
-	/*check if there is another words*/
 	
-}
 
-int typeOfCommand(char* word,const int line_num)
-{
-    int i;
-	char commandForCheck[lengthOfCommands];
-	for (i = 0; i < commandForCheck; ++i)
+	newLine.bcode.separateBits.func = commandsTypes[newCommand.numOfCommand].funct;
+	newLine.bcode.separateBits.opcode = newCommand.numOfCommand;
+	newLine.bcode.separateBits.source = newCommand.firstOperand.type;
+	newLine.bcode.separateBits.target = newCommand.secondOperand.type;
+	switch (commandsTypes[newCommand.numOfCommand].numOfOperand)
 	{
-		commandForCheck[i] = word[i];
-			
+		case 0:
+			break;
+		case 1:
+		{
+			pushOperandToTable(newCommand.FirstOperand);
+			break;
+		}
+		case 2:
+		{
+			pushOperandToTable(newCommand.FirstOperand);
+			address++
+				pushOperandToTable(newCommand.secondOperand, line);
+			address++
+		}
+
+		return addres;
 	}
-	
+
+
+}
+void pushOperandToTable(operand opr)
+{
+	Line* newLine;
+	newLineNode(newLine, address,  instruction, ARE)
+}*/
+int typeOfCommand(char* word)
+{
+	int i;
 	/* Search if match to a command in the commands types */
 	for (i = 0; i < numOfcommands; ++i)
 	{
-		if (strcmp(commandForCheck, commandTypes[i].name) == 0)
+		if (strcmp(word, commandTypes[i].name) == 0)
 			return i;
 	}
 	/*if there isnt a match*/
 	return -1;
 }
-
 operand parseOperand(char* line, int line_num)
 {
 
 	{
 
 		operand opr;
-		int operandLength= strlen(line);
+		int operandLength = strlen(line);
 		int i = 0;
 		int j;
-		
+
 		opr.type = 0;
 		opr.operandValue.immediateNum = 0;
 
@@ -106,18 +107,18 @@ operand parseOperand(char* line, int line_num)
 					printf("check if number\n");
 					if (!isdigit(line[j]))
 					{
-						
-						error_log("there isn't a legal operand",line_num);
-						return opr; 
+
+						error_log("there isn't a legal operand", line_num);
+						return opr;
 					}
 				}
 				opr.type = immediateOperand;
 				opr.operandValue.immediateNum = atoi(&line[i]);
-				printf("this is an imidate operande",line_num);
+				printf("this is an imidate operande", line_num);
 				return opr;
 			}
-			
-			error_log("there isn't a legal operand",line_num);
+
+			error_log("there isn't a legal operand", line_num);
 			return;
 		}
 
@@ -126,7 +127,7 @@ operand parseOperand(char* line, int line_num)
 		{
 			if (!isalpha(line[i + 1]))
 			{
-				error_log("there isn't a legal operand",line_num);
+				error_log("there isn't a legal operand", line_num);
 				return opr;
 			}
 
@@ -135,7 +136,7 @@ operand parseOperand(char* line, int line_num)
 			{
 				if (!isalpha(line[j]) && !isdigit(line[j]))
 				{
-					error_log("there isn't a legal operand",line_num);
+					error_log("there isn't a legal operand", line_num);
 					return opr;
 				}
 			}
@@ -162,7 +163,7 @@ operand parseOperand(char* line, int line_num)
 		/*if its can be a symbol */
 		if (!isalpha(line[i]))
 		{
-			error_log("there isn't a legal operand",line_num);
+			error_log("there isn't a legal operand", line_num);
 			return opr;
 		}
 
@@ -171,7 +172,7 @@ operand parseOperand(char* line, int line_num)
 		{
 			if (!isalpha(line[j]) && !isdigit(line[j]))
 			{
-				error_log("there isn't a legal operand",line_num);
+				error_log("there isn't a legal operand", line_num);
 				return opr;
 			}
 		}
@@ -182,11 +183,9 @@ operand parseOperand(char* line, int line_num)
 		return opr;
 	}
 }
-
-
-operand getFirstOperand(char* line, int line_num)
+operand getFirstOperand(char* line, const int line_num)
 {
-    char* operandStr;
+	char* operandStr;
 	operand opr;
 	int operandLength = 0;
 	int i;
@@ -203,8 +202,8 @@ operand getFirstOperand(char* line, int line_num)
 
 	if (line[i] == '\0')
 	{
-		error("there is no opreand after command",line_num);
-		
+		error_log("there is no opreand after command", line_num);
+
 
 	}
 
@@ -218,14 +217,12 @@ operand getFirstOperand(char* line, int line_num)
 
 	if (line[i] == '\0')
 	{
-		error_log("Required operand not found",line_num);
-		
+		error_log("Required operand not found", line_num);
+
 	}
 
 
 
-
-	printf("sending to parse\n",line_num);
 	operandStr = (char*)malloc(sizeof(char) * (operandLength + 1));
 
 	strncpy(operandStr, &line[i - operandLength], operandLength);
@@ -239,7 +236,7 @@ operand getFirstOperand(char* line, int line_num)
 
 }
 
-operand get_second_operand(char* line, int line_num)
+operand getSecondOperand(char* line, int line_num)
 {
 	operand opr;
 	int i;
@@ -256,33 +253,81 @@ operand get_second_operand(char* line, int line_num)
 
 	if (line[i] == '\0')
 	{
-		error_log("there is need to be second opernd",line_num);
+		error_log("there is need to be second opernd", line_num);
 		return opr;
 	}
 
-	return parseOperand(&line[i + 1],line_num);
+	return parseOperand(&line[i + 1], line_num);
 }
-/*
+
 int checkOperands(const command* newCommand)
 {
-	if (commandTypes[newCommand->commandNum].numOfOperand == 2)
+	if (commandTypes[newCommand->numOfCommand].numOfOpreand == 2)
 	{
-		if (!(commandTypes[newCommand->numOfCommand].allowed_org_types
-			& (1 << newCommand->operand1.type)))
+		if (!commandTypes[newCommand->numOfCommand].destAddressTypes[newCommand->SecondOperand.type])
+			
 		{
 			return 0;
 		}
 	}
-
-	if (commandTypes[newCommand->newCommandruction_type_id].numOfoperand > 0)
+	if (commandTypes[newCommand->numOfCommand].numOfOpreand >= 1)
 	{
-		if (!(commandTypes[newCommand->newCommandruction_type_id].allowed_dest_types
-			& (1 << newCommand->operand2.type)))
+		if (!commandTypes[newCommand->numOfCommand].srcAddressTypes[newCommand->FirstOperand.type])
 		{
 			return 0;
 		}
 	}
-
 	return 1;
 }
-*/
+
+
+command parseCommand(char* line, const int line_num)
+{
+	char nameOfCommand[5];
+	command newCommand;
+	/* Ged id in command types */
+	nameOfCommand[0] = line[0];
+	nameOfCommand[1] = line[1];
+	nameOfCommand[2] = line[2];
+	if (line[3] != ' ' || line[3] != '\t') {
+		nameOfCommand[3] = line[3];
+		nameOfCommand[4] = NULL;
+	}
+	else
+	{
+		nameOfCommand[3] = NULL;
+	}
+
+	newCommand.numOfCommand = typeOfCommand(nameOfCommand);
+	
+
+
+
+
+	/* if there isnt match */
+	if (newCommand.numOfCommand == -1)
+	{
+		error_log("there isnt a legal command on line", line_num);
+		return newCommand;
+	}
+
+	/* push the pointer to the start of operands */
+	line = strstr(line, nameOfCommand) + strlen(nameOfCommand);
+
+	/* parse the operands, operands type start with 0 if there arent exist */
+
+	newCommand.FirstOperand.type = -1;
+	newCommand.SecondOperand.type = -1;
+	switch (commandTypes[newCommand.numOfCommand].numOfOpreand)
+	{
+	case 0:
+		break;
+	case 1:
+		newCommand.SecondOperand = parseOperand(line, line_num);
+		break;
+	case 2:
+		newCommand.FirstOperand = getFirstOperand(line, line_num);
+		newCommand.SecondOperand = getSecondOperand(line, line_num);
+		break;
+	}
+}
