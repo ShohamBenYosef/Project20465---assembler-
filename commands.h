@@ -91,6 +91,6 @@ operand getSecondOperand(char* line, const int line_num);
 
 /*void pushCommandToTable(command lineCommand, Line newLine, int addres,int IC)*/
 
-int checkOperands(const command* newCommand, const int line_num);
+int checkOperands(const command* newCommand);
 
 #endif
