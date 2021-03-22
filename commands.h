@@ -2,7 +2,7 @@
 #define COMMANDS_H_
 
 #include "utils.h"
-#define numOfcommands 15
+#define numOfcommands 16
 #define lengthOfCommands 3
 #define NewCommandLine(cmd) cmd = (Command*)malloc(sizeof(Command));\
 	if (!cmd) fatal_error(ErrorMemoryAlloc);\
@@ -20,23 +20,23 @@ typedef enum
 } operandType;
 
 typedef union
-	{
-		int immediateNum; /* Number for immediate addres */
-		char* Symbol; /* If there is a symbol in the operand */
-		char numOfRegister; /* Number of register in operand - for register type */
+{
+	int immediateNum; /* Number for immediate addres */
+	char* Symbol; /* If there is a symbol in the operand */
+	char numOfRegister; /* Number of register in operand - for register type */
 } operandValue; /* What inside the operand */
 
 
 
 typedef struct
 {
-    	operandType type; /* Type of operand */
-    	union
-    	{
-    		int immediateNum; /* Number for immediate addres */
-    		char* Symbol; /* If there is a symbol in the operand */
-    		int numOfRegister; /* Number of register in operand - for register type */
-    } operandValue; /* What inside the operand */
+	operandType type; /* Type of operand */
+	union
+	{
+		int immediateNum; /* Number for immediate addres */
+		char* Symbol; /* If there is a symbol in the operand */
+		int numOfRegister; /* Number of register in operand - for register type */
+	} operandValue; /* What inside the operand */
 } operand;
 
 /*
@@ -60,14 +60,17 @@ typedef struct
 	int opcode; /* Command opcode */
 	int funct; /* Command function code */
 	int numOfOpreand; /* Number of operands expected with command */
-	unsigned int srcImidiateadAdress : 1;
+	unsigned int srcAddressTypes[4];
+	/*unsigned int srcImediateAddress : 1;
 	unsigned int srcDirectAddress : 1;
 	unsigned int srcRelativeAddress : 1;
-	unsigned int srcDirectRegAdress : 1;
-	unsigned int destImidiateAddress : 1;
+	unsigned int srcDirectRegAdress : 1;*/
+	unsigned int destAddressTypes[4];
+	/*unsigned int destImidiateAddress : 1;
 	unsigned int destDirectAddress : 1;
 	unsigned int destRelativeAddress : 1;
-	unsigned int destDirectRegAdress : 1;
+	unsigned int destDirectRegAdress : 1;*/
+	
 
 } CommandsType;
 
@@ -76,18 +79,18 @@ typedef struct
 
 
 
-command parseCommand(char* line,const int line_num);
+command parseCommand(char* line, const int line_num);
 
-operand getFirstOperand(char* currentChar,const int line_num);
+operand getFirstOperand(char* line, const int line_num);
 
-int typeOfCommand(char* word,const int line_num);
+int typeOfCommand(char* word);
 
-operand parseOperand(char* currentChar,const int line_num);
+operand parseOperand(char* currentChar, const int line_num);
 
-operand getSecondOperand(char* line,const int line_num);
+operand getSecondOperand(char* line, const int line_num);
 
-/*void pushCommandToTable(command lineCommand, Line newLine, int addres);*/
+/*void pushCommandToTable(command lineCommand, Line newLine, int addres,int IC)*/
 
-int checkOperands(const command* newCommand,const int line_num);
+int checkOperands(const command* newCommand, const int line_num);
 
 #endif
