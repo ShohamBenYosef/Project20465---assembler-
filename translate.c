@@ -1,4 +1,3 @@
-
 /*
 * translate.c
 */
@@ -15,8 +14,8 @@
 extern main_list_head, lebel_list_head;
 extern DCF, ICF;
 extern fp;
-
-
+extern file_name_base;
+extern file;
 
 /* func */
 int parse2();
@@ -29,22 +28,22 @@ int addTargetToSource(const Line* node);
 /**
 *
 */
-int parse2()
+int parse2(char* file_name)
 {
 
 	/* file to print on */
 	FILE* obOut, * extOut, * entOut;
 
 
-	/* temp lebels */
+	/* Temp lebels */
 	Lebel* tmp_lebel = lebel_list_head;
 	Lebel* fnd_lebel = lebel_list_head;
-	/* nodes for the lists - main */
+	/* Nodes for the lists - main */
 	Line* node = main_list_head;
 
-
+	/* Flags*/
 	int empty_entry = 0, empty_extern = 0;
-	/* counters that hold the num of ent and ext*/
+	/* Counters that hold the num of ent and ext*/
 	int entry_flag = 0, extern_flag = 0;
 
 
@@ -79,9 +78,6 @@ int parse2()
 			if (empty_entry == 1)
 				error_log("Error, entry lebel has no.... ", -100);
 		}
-		tmp_lebel = tmp_lebel->next;
-
-
 
 
 		/* check extern type */
@@ -109,13 +105,14 @@ int parse2()
 				}
 				node = node->next;
 			}
+			node = main_list_head;
 			if (empty_extern == 1)
 				error_log("Error, extern lebel has no.... ", -100);
 		}
-		node = main_list_head;
-
+		tmp_lebel = tmp_lebel->next;
 
 	}/* end of while loop */
+
 
 
 
@@ -144,27 +141,27 @@ int parse2()
 	/* Entry lebel */
 	if (entry_flag > 0)
 	{
-		entOut = open_file(full_file_name, EntryFileEnding, "\"w\"");
-		printEnt(entOut);
-		close_file(full_file_name, EntryFileEnding);
+		open_file(file_name_base, EntryFileEnding, "\"w\"");
+		printEnt(file);
+		fclose(file);
 	}
 	/* Extern lebel*/
 	if (extern_flag > 0)
 	{
-		extOut = open_file(full_file_name, ExternFileEnding, "\"w\"");
-		printExt(extOut); /* TODO!*/
-		close_file(full_file_name, ExternFileEnding);
+		open_file(file_name_base, ExternFileEnding, "\"w\"");
+		printExt(file);
+		fclose(file);
 	}
 
 	/* Object. */
-	obOut = open_file(full_file_name, ObjectFileEnding, "\"w\"");
-	printObjectFile(obOut);
-	close_file(full_file_name, ObjectFileEnding);
+	open_file(file_name_base, ObjectFileEnding, "\"w\"");
+	printObjectFile(file);
+	fclose(file);
 
 	/* Closing the prog */
 	freeLebelList(lebel_list_head);
 	freeLineList(main_list_head);
-	printf(" END OF %s FILE", full_file_name);
+	printf(" END OF %s FILE", file_name_base);
 
 	return 1;
 }/* end of func */

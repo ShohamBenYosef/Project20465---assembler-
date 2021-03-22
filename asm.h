@@ -6,17 +6,7 @@
 #include "file.h"
 #include "error.h"
 #include "utils.h"
-
-
-/* build new lebel node */
-#define NewLebelNode(_lebel) _lebel = (Lebel*)malloc(sizeof(Lebel));\
-	if (!_lebel) fatal_error(ErrorMemoryAlloc);\
-	_lebel->lebel = (char*)malloc(sizeof(char));\
-	if(!lebel) fatal_error(ErrorMemoryAlloc);\
-	_lebel->line = 0;\
-	_lebel->type = 0;\
-	_lebel->next = NULL;
-
+#include <math.h>
 
 
 
@@ -25,8 +15,7 @@ char* tempWord[MAX_LINE_LENGTH];
 int DC, IC, L;
 extern fp;
 
-
-
+/* we dont need it */
 typedef struct {
 	char* lebel;
 	int IC;
@@ -43,11 +32,11 @@ typedef struct {
 /**
 * A function that extracts the information after the word .data in a assembly line
 */
-Line extract_data(char* word, int const line_num);
+/*void extract_data(char* word, int const line_num);*/
 /**
 * A function that extracts the information after the word .string in a assembly line
 */
-Line* extract_string(char* word, int const line_num, char* line);
+int extract_string(char* word, int const line_num, char* line);
 /**
 * A function that extracts the next Lebel.
 */
@@ -63,9 +52,11 @@ int check_valid_lebel(char* lebel, int line_num);
 /**
 * A method that parses Line after Line in the assembly file. (First round in the algorithm)
 */
-int parse();
-
-
+int parse(FILE* file);
+/**
+*
+*/
+int BlankLine(char* line);
 
 
 #endif

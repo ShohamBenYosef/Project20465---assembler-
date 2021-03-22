@@ -9,8 +9,20 @@
 #include "error.h"
 #include "utils.h"
 
-enum { objectFile, externFile, entryFile };
+enum { entryFile, externFile, objectFile };
 
+
+#define OpenFile(file, ending, mod) {\
+	char* file_name = get_file_name(extension);\
+	file = fopen(file_name, mod);\
+	if (!file) {\
+		fprintf(stderr, ErrorCantRead, file_name);\
+		fprintf(stderr, "\n");\
+		free(file_name);\
+		exit(EXIT_FAILURE);\
+	}\
+	free(file_name);\
+}
 
 
 /***

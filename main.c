@@ -7,41 +7,39 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "utils.h"
+#include "asm.h"
+#include "translate.h"
 
-
-
+extern file;
 /*******************************/
 int main(int argc, char* argv[])
 {
-	FILE* fp;
-	int succsses = 0;
+	int success = 0;
+	printf("in main - start 1\n");
 
+	printf("before check arg\n");
 	if (argc >= 2)
 	{
-		while (--argc > 0)
+		printf("before for loop\n");
+		for (; argc > 1; argc--)
 		{
-			open_file(*++argv,MainFileEnding, "r");
 
-			succsses= parse(fp); /* ROUND 1*/   /*סיבוב ראשון*/
-			close_file(full_file_name, MainFileEnding);
-			if (succsses)
+			printf("in main - start 2   open file\n");
+			open_file(argv[argc - 1], MainFileEnding, "r");
+			printf("after open\n");
+			success = parse(file);
+			close_file();
+
+			if (!success)
 			{
-				printf("round 1 works successfuly.\n");
-				succsses = parse2(fp);
-				if (succsses)
-					printf("file assembled.");
-				else {
-					printf("Errors in round 2.\n");
-				}
-			}
-			else {
-				printf("Error Found!, continue to the next file(?).\n");
-				/*assembler_clean();*/
+				printf("Errors found, skipping translation.\n****************************************************************************************************************************\n");
+				/*clean();*/
 				continue;
 			}
+			printf("back to main  \n");
 
-			/*clean();  in assambler file...*/  /*  לכתוב - פונקציה שמנקה את מחסנית הקריאות ומאפסת את הדגלים*/
-		} /* End of while loop*/
+
+		} /* End of for loop*/
 	}/* End of if condition. */
 	else {
 		fatal_error(ErrorMissingArgument);

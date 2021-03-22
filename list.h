@@ -6,8 +6,17 @@
 #include <ctype.h>
 #include "error.h"
 
-extern fp;
+extern file;
 
+
+/* build new lebel node */
+/*  need to be in list.h */
+#define NewLebelNode(_lebel) _lebel = (Lebel*)malloc(sizeof(Lebel));\
+	if (!_lebel) fatal_error(ErrorMemoryAlloc);\
+	_lebel->lebel = NULL;\
+	_lebel->line = 0;\
+	_lebel->type = 0;\
+	_lebel->next = NULL;
 
 /* enum for Attributes field in the symbol table/list. */
 typedef enum {
@@ -35,12 +44,9 @@ typedef struct {
 * Union That hold the 12 bits.
 * if its instruction so the bits hold together.
 */
-typedef struct {
-	union
-	{
-		MachineCodeBit separateBits;
-		unsigned int allBits : 12;
-	};
+typedef union {
+	MachineCodeBit separateBits;
+	unsigned long allBits;
 } MachineCode;
 
 

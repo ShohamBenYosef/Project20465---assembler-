@@ -1,78 +1,41 @@
-#ifndef LIST_H_
-#define LIST_H_
+#ifndef FILE_H_
+#define FILE_H_
 
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include <stdio.h>
 #include "error.h"
 
-extern fp;
 
 
-/* enum for Attributes field in the symbol table/list. */
-typedef enum {
+#define MainFileEnding ".as"
+#define ObjectFileEnding ".ob"
+#define ExternFileEnding ".ext"
+#define EntryFileEnding ".ent"
 
-	codeType,
-	dataType,
-	externType,
-	entryType
-
-} Attributes;
-
-
-/**
-* Hold the 12 bits in bit field
+/*
+* open a file
+* save pointer to the file (full_file_name).
+*  - modolary
 */
-typedef struct {
-	unsigned int source : 2;
-	unsigned int target : 3;
-	unsigned int func : 4;
-	unsigned int opcode : 4;
-} MachineCodeBit;
-
-
-/**
-* Union That hold the 12 bits.
-* if its instruction so the bits hold together.
-*/
-typedef struct {
-	union
-	{
-		MachineCodeBit separateBits;
-		unsigned int allBits : 12;
-	};
-} MachineCode;
-
-
-/**
-* node for the main table - node is a "line".
-*/
-typedef struct Line {
-	char* lebel;
-	int address;
-	MachineCode bcode;
-	int is_instruction;
-	char are;
-	struct Line* next;
-}Line;
-
+void open_file(const char* file_name, char* ending, char* mod);
 /**
 *
 */
-typedef struct {
-	char* lebel;
-	int line; /* decimal*/
-	Attributes type;
-	struct Lebel* next;
-}Lebel;
+char* get_file_name(const char* ending);
+/**
+*
+*/
+char* runOnLine();
 
-
-Line* addToMainList(Line* main_list_head, Line* new_node);
-Lebel* addToSymbolList(Lebel* lebel_list_head, Lebel* new_node);
-void freeLebelList(Lebel* head);
-void freeLineList(Line* head);
-Lebel* searchInLebelList(Lebel* head, char* lebel);
-Line* searchInMainList(Line* head, char* lebel);
-Line* newLineNode(Line* node, int line, int instruction, char ARE);
-
+/**
+* Collect the next word.
+*/
+char* read_word(const char* line, const int line_num, FILE* fp);
+/**
+*
+*/
+char* get_file_name(const char* ending);
+/**
+*
+*/
+void close_file();
 #endif

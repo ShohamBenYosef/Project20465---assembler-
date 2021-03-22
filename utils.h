@@ -9,10 +9,11 @@
 #define MAX_DATA_NUM 4096
 #define NUM_OF_REG 7
 
+#define IsBlank(c) ((c) == ' ' || (c) == '\t')
+/*#define NextWord(x) while(IsBlank(*(x))) (x)++*/
 
-
-
-int IsBlank(char* c);
+/*
+int IsBlank(char* c);*/
 char* NextWord(char* x);
 
 #endif
