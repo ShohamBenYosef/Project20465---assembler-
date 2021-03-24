@@ -5,7 +5,7 @@
 #ifndef ERROR_H_
 #define ERROR_H_
 
-/* list of common errors:  */
+/* List of common errors:  */
 #define ErrorMaxLengthLine "there is to many characters in this line."
 #define ErrorMissingArgument "Missing argument."
 #define ErrorCantRead "Could not open file %s for reading."

@@ -5,10 +5,9 @@
 #include "error.h"
 #include "utils.h"
 
-#pragma warning(disable : 4996)
-
-
-/* add */
+/**
+* Add Node to the Lists
+*/
 
 Line* addToMainList(Line* list, Line* new_node)
 {
@@ -16,42 +15,43 @@ Line* addToMainList(Line* list, Line* new_node)
 
 	p = list;
 	if (!list)
+	{
 		list = new_node;
+	}
 	else
 	{
-		while (p->next)
+		while (p)
+		{
 			p = p->next;
-
-		p->next = new_node;
+		}
+		p = new_node;
 	}
 
-	return list; /* returning pointer to the top of the list*/
+	return list; /* Returning pointer to the top of the list*/
 }
 
 Lebel* addToSymbolList(Lebel* list, Lebel* new_node)
 {
 	Lebel* p;
 
-	printf("in add to symbol.\n");
 	p = list;
-	if (!p)
+	if (!list)
 	{
-		printf("if list!=null\n");
 		/* Empty list; Let the new node be its head. */
 		list = new_node;
 	}
 	else {
-		printf("else\n");
 		/* The list is not empty; Find the tail. */
-		while (p != NULL)
+		while (p != NULL) {
 			p = p->next;
-
-		p->next = new_node;
+		}
+		p = new_node;
 	}
-	printf("return\n");
 	return list;
 }
-
+/**
+* Func to free the lists
+*/
 void freeLebelList(Lebel* head)
 {
 	Lebel* p, * temp;
@@ -68,7 +68,7 @@ void freeLebelList(Lebel* head)
 		free(p);
 	}
 	return;
-} /* end of func */
+} /* End of func */
 
 void freeLineList(Line* head)
 {
@@ -87,10 +87,10 @@ void freeLineList(Line* head)
 		free(p);
 	}
 	return;
-} /* end of func */
+} /* End of func */
 
 
-/* search*/
+/*Search in lists*/
 
 Lebel* searchInLebelList(Lebel* head, char* lebel)
 {
@@ -117,10 +117,11 @@ Line* searchInMainList(Line* head, char* lebel)
 
 		temp = temp->next;
 	}
-	free(temp);
 	return NULL;
 }
-
+/**
+* Create new nodes
+*/
 Line* newLineNode(Line* node, int line, int instruction, char ARE)
 {
 	node = (Line*)malloc(sizeof(Line));
@@ -135,7 +136,6 @@ Line* newLineNode(Line* node, int line, int instruction, char ARE)
 	node->are = ARE;
 	node->bcode.allBits = 0;
 	node->next = NULL;
-
 }
 Lebel* NewLebelNode()
 {
@@ -148,4 +148,4 @@ Lebel* NewLebelNode()
 	lebel->type = 0;
 	lebel->next = NULL;
 	return lebel;
-}ã
+}

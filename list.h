@@ -8,9 +8,6 @@
 
 
 
-typedef struct Lebel* Shead;
-typedef struct Line* Lhead;
-
 /* enum for Attributes field in the symbol table/list. */
 typedef enum {
 
@@ -44,7 +41,7 @@ typedef union {
 
 
 /**
-* node for the main table - node is a "line".
+* Node for the main table - node is a "line".
 */
 typedef struct Line {
 	char* lebel;
@@ -56,7 +53,7 @@ typedef struct Line {
 }Line;
 
 /**
-*
+* Node for symbol table.
 */
 typedef struct {
 	char* lebel;
@@ -65,13 +62,16 @@ typedef struct {
 	struct Lebel* next;
 }Lebel;
 
-
+/* add nodes to lists*/
 Line* addToMainList(Line* main_list_head, Line* new_node);
 Lebel* addToSymbolList(Lebel* lebel_list_head, Lebel* new_node);
+/* Free Lists */
 void freeLebelList(Lebel* head);
 void freeLineList(Line* head);
+/* Search lebels in list */
 Lebel* searchInLebelList(Lebel* head, char* lebel);
 Line* searchInMainList(Line* head, char* lebel);
+/* Build new nodes*/
 Line* newLineNode(Line* node, int line, int instruction, char ARE);
 Lebel* NewLebelNode();
 

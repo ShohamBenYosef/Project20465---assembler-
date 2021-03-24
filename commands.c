@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
@@ -7,9 +6,6 @@
 #include "utils.h"
 #include "commands.h"
 #include "list.h"
-
-extern file;
-
 
 const CommandsType commandTypes[numOfcommands] = {
 	{"mov", 0, 0, 2, {1, 1, 0, 1}, {0, 1, 0, 1} },
@@ -34,7 +30,6 @@ const CommandsType commandTypes[numOfcommands] = {
 /*
 int pushCommandToTable(command newCommand, Line newLine, int address)
 {
-	
 
 	newLine.bcode.separateBits.func = commandsTypes[newCommand.numOfCommand].funct;
 	newLine.bcode.separateBits.opcode = newCommand.numOfCommand;
@@ -56,11 +51,8 @@ int pushCommandToTable(command newCommand, Line newLine, int address)
 				pushOperandToTable(newCommand.secondOperand, line);
 			address++
 		}
-
 		return addres;
 	}
-
-
 }
 void pushOperandToTable(operand opr)
 {
@@ -79,6 +71,8 @@ int typeOfCommand(char* word)
 	/*if there isnt a match*/
 	return -1;
 }
+
+
 operand parseOperand(char* line, int line_num)
 {
 
@@ -92,29 +86,24 @@ operand parseOperand(char* line, int line_num)
 		opr.type = 0;
 		opr.operandValue.immediateNum = 0;
 
-		printf("%c \n", line[i]);
 		/* Immediate case */
 		if (line[i] == '#')
 		{
-			printf("yes its statrs with #\n");
 			i++;
-			printf("check if have sign\n");
+			
 			if (line[i] == '+' || line[i] == '-' || isdigit(line[i]))
 			{
 				j = i + 1;
 				for (; j < operandLength; j++)
 				{
-					printf("check if number\n");
 					if (!isdigit(line[j]))
 					{
-
 						error_log("there isn't a legal operand", line_num);
 						return opr;
 					}
 				}
 				opr.type = immediateOperand;
 				opr.operandValue.immediateNum = atoi(&line[i]);
-				printf("this is an imidate operande", line_num);
 				return opr;
 			}
 
@@ -183,6 +172,8 @@ operand parseOperand(char* line, int line_num)
 		return opr;
 	}
 }
+
+
 operand getFirstOperand(char* line, const int line_num)
 {
 	char* operandStr;
@@ -201,14 +192,10 @@ operand getFirstOperand(char* line, const int line_num)
 	}
 
 	if (line[i] == '\0')
-	{
 		error_log("there is no opreand after command", line_num);
 
 
-	}
-
 	/* length of the  operand */
-
 	while (line[i] != ' ' && line[i] != '\t' && line[i] != ',' && line[i] != '\0')
 	{
 		operandLength++;
@@ -216,10 +203,8 @@ operand getFirstOperand(char* line, const int line_num)
 	}
 
 	if (line[i] == '\0')
-	{
 		error_log("Required operand not found", line_num);
 
-	}
 
 
 
@@ -236,6 +221,7 @@ operand getFirstOperand(char* line, const int line_num)
 
 }
 
+
 operand getSecondOperand(char* line, int line_num)
 {
 	operand opr;
@@ -246,10 +232,8 @@ operand getSecondOperand(char* line, int line_num)
 
 	/* go to the start of the second operand */
 	i = 0;
-	while (line[i] != ',' && line[i] != '\0')
-	{
-		i++;
-	}
+	while (line[i] != ',' && line[i] != '\0') i++;
+
 
 	if (line[i] == '\0')
 	{
@@ -265,7 +249,7 @@ int checkOperands(const command* newCommand)
 	if (commandTypes[newCommand->numOfCommand].numOfOpreand == 2)
 	{
 		if (!commandTypes[newCommand->numOfCommand].destAddressTypes[newCommand->SecondOperand.type])
-			
+
 		{
 			return 0;
 		}
@@ -285,10 +269,12 @@ command parseCommand(char* line, const int line_num)
 {
 	char nameOfCommand[5];
 	command newCommand;
+
 	/* Ged id in command types */
 	nameOfCommand[0] = line[0];
 	nameOfCommand[1] = line[1];
 	nameOfCommand[2] = line[2];
+
 	if (line[3] != ' ' || line[3] != '\t') {
 		nameOfCommand[3] = line[3];
 		nameOfCommand[4] = NULL;
@@ -299,9 +285,6 @@ command parseCommand(char* line, const int line_num)
 	}
 
 	newCommand.numOfCommand = typeOfCommand(nameOfCommand);
-	
-
-
 
 
 	/* if there isnt match */
@@ -318,6 +301,7 @@ command parseCommand(char* line, const int line_num)
 
 	newCommand.FirstOperand.type = -1;
 	newCommand.SecondOperand.type = -1;
+
 	switch (commandTypes[newCommand.numOfCommand].numOfOpreand)
 	{
 	case 0:

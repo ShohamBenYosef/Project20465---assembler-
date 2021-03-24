@@ -2,14 +2,17 @@
 #define COMMANDS_H_
 
 #include "utils.h"
+
 #define numOfcommands 16
 #define lengthOfCommands 3
+
 #define NewCommandLine(cmd) cmd = (Command*)malloc(sizeof(Command));\
 	if (!cmd) fatal_error(ErrorMemoryAlloc);\
 	cmd->first_operand = NULL;\
 	cmd->second_operand = NULL;\
 	cmd->numOfCommand = 0;\
 	cmd->address = 0;
+
 
 typedef enum
 {
@@ -24,8 +27,8 @@ typedef union
 	int immediateNum; /* Number for immediate addres */
 	char* Symbol; /* If there is a symbol in the operand */
 	char numOfRegister; /* Number of register in operand - for register type */
-} operandValue; /* What inside the operand */
 
+} operandValue; /* What inside the operand */
 
 
 typedef struct
@@ -36,7 +39,9 @@ typedef struct
 		int immediateNum; /* Number for immediate addres */
 		char* Symbol; /* If there is a symbol in the operand */
 		int numOfRegister; /* Number of register in operand - for register type */
+
 	} operandValue; /* What inside the operand */
+
 } operand;
 
 /*
@@ -48,6 +53,7 @@ typedef struct
 	operand FirstOperand; /* origin operand */
 	operand SecondOperand; /* destination operand */
 	int address; /* the address of command */
+
 } command;
 
 
@@ -70,7 +76,6 @@ typedef struct
 	unsigned int destDirectAddress : 1;
 	unsigned int destRelativeAddress : 1;
 	unsigned int destDirectRegAdress : 1;*/
-	
 
 } CommandsType;
 
