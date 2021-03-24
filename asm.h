@@ -7,13 +7,15 @@
 #include "error.h"
 #include "utils.h"
 #include <math.h>
+#include "commands.h"
+
 
 
 
 
 char* tempWord[MAX_LINE_LENGTH];
 int DC, IC, L;
-extern fp;
+extern file;
 
 /* we dont need it */
 typedef struct {
@@ -28,7 +30,20 @@ typedef struct {
 }LineData;
 
 
+typedef struct {
+	Lebel* Shead;
+	Line* Mhead;
+	unsigned int errors;
+	command cmd;
+	char* file_name_base;
+	FILE* file;
+	/* Command and data counters. */
+	unsigned int IC;
+	unsigned int DC;
+} ParserData;
 
+
+ParserData parser_data;
 /**
 * A function that extracts the information after the word .data in a assembly line
 */

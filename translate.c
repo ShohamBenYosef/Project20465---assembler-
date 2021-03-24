@@ -11,11 +11,6 @@
 #include <stdio.h>
 #include <string.h>
 
-extern main_list_head, lebel_list_head;
-extern DCF, ICF;
-extern fp;
-extern file_name_base;
-extern file;
 
 /* func */
 int parse2();
@@ -30,16 +25,16 @@ int addTargetToSource(const Line* node);
 */
 int parse2(char* file_name)
 {
-
+	printf(" IN PARSE2() --  \n");
 	/* file to print on */
 	FILE* obOut, * extOut, * entOut;
 
 
 	/* Temp lebels */
-	Lebel* tmp_lebel = lebel_list_head;
-	Lebel* fnd_lebel = lebel_list_head;
+	Lebel* tmp_lebel = parser_data.Shead;
+	Lebel* fnd_lebel = parser_data.Shead;
 	/* Nodes for the lists - main */
-	Line* node = main_list_head;
+	Line* node = parser_data.Mhead;
 
 	/* Flags*/
 	int empty_entry = 0, empty_extern = 0;
@@ -47,15 +42,23 @@ int parse2(char* file_name)
 	int entry_flag = 0, extern_flag = 0;
 
 
+	tmp_lebel = tmp_lebel->next;
+	printf(" after declelrations.  \n");
+	printlist();
+	printf("tmp_lebel: %s\n", &tmp_lebel->lebel);
+
 	/* run on symbol list with tmp_lebel as a pointer */
 	while (tmp_lebel)
 	{
+		printf("IN WHILE \n");
 		/* check entry type */
 		if (tmp_lebel->type == entryType)
 		{
 			/* run on symbol list with fnd_lebel as a pointer */
+			printf("  in if in while  ----   entry\n");
 			while (fnd_lebel)
 			{
+				printf(" run on symbol lebel \n");
 				entry_flag = 1;
 				if (!strcmp(tmp_lebel->lebel, fnd_lebel->lebel))
 				{
@@ -64,7 +67,7 @@ int parse2(char* file_name)
 				}
 				fnd_lebel = fnd_lebel->next;
 			}/* End of inner while */
-			fnd_lebel = lebel_list_head;
+			fnd_lebel = parser_data.Shead;
 
 			while (node)
 			{
@@ -93,7 +96,7 @@ int parse2(char* file_name)
 				}
 				fnd_lebel = fnd_lebel->next;
 			}
-			fnd_lebel = lebel_list_head;
+			fnd_lebel = parser_data.Shead;
 
 			while (node)
 			{
@@ -105,7 +108,7 @@ int parse2(char* file_name)
 				}
 				node = node->next;
 			}
-			node = main_list_head;
+			node = parser_data.Mhead;
 			if (empty_extern == 1)
 				error_log("Error, extern lebel has no.... ", -100);
 		}
@@ -128,40 +131,40 @@ int parse2(char* file_name)
 			}
 			node = node->next;
 		}
-		node = main_list_head;
+		node = parser_data.Mhead;
 
 		tmp_lebel = tmp_lebel->next;
 	}
 
 	/* last check of error before print */
-	if (errors_count > 0)
+	if (parser_data.errors > 0)
 		fatal_error(ErrorInAssemblyCode);
 
 
 	/* Entry lebel */
 	if (entry_flag > 0)
 	{
-		open_file(file_name_base, EntryFileEnding, "\"w\"");
+		open_file(parser_data.file_name_base, EntryFileEnding, "\"w\"");
 		printEnt(file);
 		fclose(file);
 	}
 	/* Extern lebel*/
 	if (extern_flag > 0)
 	{
-		open_file(file_name_base, ExternFileEnding, "\"w\"");
+		open_file(parser_data.file_name_base, ExternFileEnding, "\"w\"");
 		printExt(file);
 		fclose(file);
 	}
 
 	/* Object. */
-	open_file(file_name_base, ObjectFileEnding, "\"w\"");
+	open_file(parser_data.file_name_base, ObjectFileEnding, "\"w\"");
 	printObjectFile(file);
 	fclose(file);
 
 	/* Closing the prog */
-	freeLebelList(lebel_list_head);
-	freeLineList(main_list_head);
-	printf(" END OF %s FILE", file_name_base);
+	freeLebelList(parser_data.Shead);
+	freeLineList(parser_data.Shead);
+	printf(" END OF %s FILE", parser_data.file_name_base);
 
 	return 1;
 }/* end of func */
@@ -171,7 +174,7 @@ int parse2(char* file_name)
 */
 void printEnt(FILE* name_file)
 {
-	Lebel* temp_lebel = lebel_list_head;
+	Lebel* temp_lebel = parser_data.Shead;
 
 	while (temp_lebel)
 	{
@@ -181,7 +184,7 @@ void printEnt(FILE* name_file)
 		temp_lebel = temp_lebel->next;
 	}/* end of while*/
 	/* return fnd back to the start. */
-	temp_lebel = lebel_list_head;
+	temp_lebel = parser_data.Shead;
 }
 
 /**
@@ -189,8 +192,8 @@ void printEnt(FILE* name_file)
 */
 void printExt(FILE* name_file)
 {
-	Lebel* temp_lebel = lebel_list_head;
-	Lebel* fnd_lebel = lebel_list_head;
+	Lebel* temp_lebel = parser_data.Shead;
+	Lebel* fnd_lebel = parser_data.Shead;
 
 
 	while (temp_lebel)
@@ -205,7 +208,7 @@ void printExt(FILE* name_file)
 				fnd_lebel = fnd_lebel->next;
 			}
 			/* return fnd back to the start. */
-			fnd_lebel = lebel_list_head;
+			fnd_lebel = parser_data.Shead;
 		}/* end of  if condition */
 
 		temp_lebel = temp_lebel->next;
@@ -217,9 +220,9 @@ void printExt(FILE* name_file)
 */
 void printObjectFile(FILE* file_name)
 {
-	Line* temp = main_list_head;
+	Line* temp = parser_data.Mhead;
 
-	fprintf(file_name, "\t\t\t\t%d\t%d\n", ICF, DCF);
+	fprintf(file_name, "\t\t\t\t%d\t%d\n", parser_data.IC, parser_data.DC);
 	while (temp)
 	{
 
@@ -250,4 +253,19 @@ int addTargetToSource(const Line* node)
 		res += 12;
 
 	return res;
+}
+
+
+
+void printlist()
+{
+	printf(" 1\n");
+	Line* temp = parser_data.Shead;
+	printf(" 3\n");
+	while (temp)
+	{
+		printf(" x\n");
+		printf("temp->lebel: %s\n", &temp->lebel);
+		temp = temp->next;
+	}
 }

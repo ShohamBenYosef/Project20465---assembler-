@@ -10,13 +10,11 @@
 #include "commands.h"
 
 
-int DCF, ICF;
-int IC, DC;
 extern file;
 
 const char* command_names[] = { "mov", "cmp", "add", "sub","lea", "clr","not", "inc", "dec", "jmp", "bne", "jsr", "red", "prn", "rts", "stop" };
 
-extern main_list_head, lebel_list_head;
+
 
 /* DATA*/
 void extract_data(char* line, int const line_num)
@@ -105,9 +103,10 @@ void extract_data(char* line, int const line_num)
                         newLineNode(node, line_num, 1, 'A');
                         node->lebel = NULL;
                         node->bcode.allBits = atoi(current_number_string);
-
-
+                        node->address = parser_data.IC++;
+                        DC++;
                         current_number_string_index = 0;
+                        addToMainList(parser_data.Mhead, node);
                     }
                     printf("   there is not else \n");
                 }
@@ -146,18 +145,23 @@ void extract_data(char* line, int const line_num)
         {
             current_number_string[current_number_string_index] = '\0';
             size++;
-
+            printf(" build node in data\n");
             newLineNode(node, line_num, 1, 'A');
             node->lebel = NULL;
             node->bcode.allBits = atoi(current_number_string);
-
+            node->address = parser_data.IC++;
+            DC++;
             current_number_string_index = 0;
+            addToMainList(parser_data.Mhead, node);
         }
         printf("  \n");
         printf("end of while?  \n");
         line = line + strlen(word);
         comma_expected = 1;
+        
         word = read_word(line, line_num, file);
+        if (!word)
+            return;
     }
 
     return;
@@ -258,7 +262,10 @@ int extract_string(char* word, int line_num, char* line)
             Line* node1;
             newLineNode(node1, index, 1, 'A');
             node->bcode.allBits = pLine[index];
-            addToMainList(main_list_head, node);
+            node->address = parser_data.IC++;
+            DC++;
+
+            addToMainList(parser_data.Mhead, node);
 
             printf("%d \n", pLine[index]);
             printf("%d \n", node->bcode.allBits);
@@ -279,7 +286,7 @@ void extract_lebel(char* word, char* curr_char, int const line_num, char* line, 
         printf("entry  \n");
     else
         printf(" extern \n");
-        /*******************************/
+    /*******************************/
     Lebel* lebel;
     word = curr_char;
 
@@ -300,7 +307,7 @@ void extract_lebel(char* word, char* curr_char, int const line_num, char* line, 
     while (!IsBlank(*curr_char)) curr_char--;
     printf("  move back 1\n");
     while (isalnum(*curr_char)) curr_char--;
-    printf(" move back 2 \n"); 
+    printf(" move back 2 \n");
     if (curr_char < word)
     {
         printf("  some error\n");
@@ -310,68 +317,71 @@ void extract_lebel(char* word, char* curr_char, int const line_num, char* line, 
 
     /* build the node of lebel */
     printf(" build lebel node \n");
-    NewLebelNode(lebel);
-    lebel->lebel = (char*)malloc(MAX_LINE_LENGTH + 1);
-    if (!lebel->lebel)
-        fatal_error(ErrorMemoryAlloc);
-    printf(" after memeory alloc \n");
-    strcpy(lebel->lebel, word);
-    if (getLineLebel(lebel->lebel, line_num))
+NewLebelNode(lebel);
+lebel->lebel = (char*)malloc(MAX_LINE_LENGTH + 1);
+if (!lebel->lebel)
+fatal_error(ErrorMemoryAlloc);
+printf(" after memeory alloc \n");
+strcpy(lebel->lebel, word);
+if (getLineLebel(lebel->lebel, line_num))
+{
+    printf(" in if \n");
+    /*Attributes*/
+    if (type == externType)
     {
-        printf(" in if \n");
-        /*Attributes*/
-        if (type == externType)
-        {
-            printf("extern  \n");
-            lebel->type = externType;
-            lebel->line = 0;
-            addToSymbolList(lebel_list_head, lebel);
-        }
-        else if (type == entryType)
-        {
-            printf("  entry\n");
-            lebel->type = entryType;
-            lebel->line = line_num;
-            addToSymbolList(lebel_list_head, lebel);
-        }
+        printf("extern  \n");
+        lebel->type = externType;
+        lebel->line = 0;
+        addToSymbolList(parser_data.Shead, lebel);
     }
-    printf("END OF EXTRACT LEBEL  - - - back to parse.  \n");
-    return;
+    else if (type == entryType)
+    {
+        printf("  entry\n");
+        lebel->type = entryType;
+        lebel->line = line_num;
+        addToSymbolList(parser_data.Shead, lebel);
+    }
+}
+printf("END OF EXTRACT LEBEL  - - - back to parse.  \n");
+return;
 }
 
 /* Check if the line start with 'LEBEL:' */
 char* getLineLebel(char* line, int line_num)
 {
+    printf("\n\n%s\n", line);
     printf("\n in getlinelebel  \n");
     int length = 0;
     char* lebel;
-    const char* temp = line++;
+    const char* temp = line;
+    printf("%s\n", temp);
 
     lebel = (char*)malloc(MAX_LINE_LENGTH + 1);
     if (!lebel)
         fatal_error(ErrorMemoryAlloc);
     printf("after memory allocation   \n");
     /* check capital letters. */
-    if (!isalpha(*temp))
+    if (!isalpha(temp))
     {
         printf("***** NULL   ******  \n");
         free(lebel);
-
         return NULL;
     }
 
     while (isalnum(*temp) && length < MAX_LINE_LENGTH)
     {
+        printf("in while-/-/-/-/-/-/-\n");
         temp++;
         length++;
     }
     printf("after while  \n");
     if (line[length] == ':') {
-        strncpy(lebel, line, length);
+        strncpy(&lebel, *line, length);
         lebel[length] = '\0';
+        printf("%s\n", lebel);
         return lebel;
     }
-    printf(" end of getline lebel - returrn to parse: \n");
+    printf(" end of getline lebel - returrn to parse: %s\n", lebel);
 
     free(lebel);
     return NULL;
@@ -391,35 +401,27 @@ int BlankLine(char* line)
 /**
 * יש מצב שלא נצטרך
 */
-/*int check_valid_lebel(char* lebel, int line_num)
+int check_valid_lebel(char* lebel, int line_num)
 {
-printf("in valid  \n");
-    int index;
+    int len = 0;
     char* word = lebel;
-    while (!IsBlank(word))
-    {
-        printf(" in while loop check if its alphaand : \n");
-        if (!isalpha(word) || !isalnum(word))
-        {
-            error_log("Error, illigal char in lebel ", line_num);
-            return 0;
-        }
+    
+    while (isalnum(*word) && len < MAX_DATA_NUM) {
         word++;
+        len++;
     }
-    if (word != ':')
+    if (lebel[len] == ':')
     {
-        error_log("Error, illigal char in lebel ", line_num);
-        return 0;
+        return 1;
     }
-    printf("go back to \n");
-    free(lebel);
-    return 1;
-}*/
+    return 0;
+}
 
 int parse(FILE* file)
 {
     /* 1 */
-    IC = 99, DC = 0;
+    /* Struct to hold all the data*/
+    parser_data.IC = 99, parser_data.DC = 0;
 
     /* Nodes for Main list and Symbol list.  */
     Lebel* lebel = NULL;
@@ -436,9 +438,9 @@ int parse(FILE* file)
 
     char* curr_char;
 
-    char* temp_arr[10];
     command cmd;
-    int there_is_lebel = 0, index = 0;
+    int there_is_lebel, index = 0;
+
 
     printf(" IN ASM.C - starting purse: \n");
     printf("GO to runOnLine - FILE.C");
@@ -447,7 +449,8 @@ int parse(FILE* file)
     {
         printf("  in the while loop\n");
         line_num++;
-
+        there_is_lebel = 0;
+        printf(" %d\n", line_num);
         /* Need to check if it works */
         if (strlen(line) > MAX_LINE_LENGTH)
             error_log("Error, line is too ", line_num);
@@ -465,136 +468,134 @@ int parse(FILE* file)
         }
         printf("IN THE IF CONDITION - CHECK THE LINE:\n create new node  \n");
         /* Get the lebel of the line */
-        NewLebelNode(lebel);
-        printf("lebel: %s\n", lebel->lebel);
+        lebel = NewLebelNode();
+
         printf(" send it to getLineLebel \n");
-        lebel->lebel = getLineLebel(line, line_num);
+        lebel->lebel = read_word(line, line_num, file);
+
         printf("back from getLineLebel - go to validate  \n");
         if (lebel->lebel != NULL) /* if its lebel */
         {
             printf("  lebel->lebel != NULL  so lebel: %s\n", lebel->lebel);
-            /*there_is_lebel = check_valid_lebel(lebel->lebel, line_num);*/
+               there_is_lebel = check_valid_lebel(read_word(line, line_num, file) , line_num);
+               printf("print num of lebel: %d\n", there_is_lebel);
         }
         /* ending of the first word */
         printf(" we back in parse:  \n");
 
-        word = line;
-        printf(" print word - %s\n", word);
-        NextWord(word);
 
-        /* Empty line. */
+
+        /*
         if (*word == '\0' || *word == '\n' || (IsBlank(*word) && strlen(line) == 1))
         {
             printf(" chaeck if *word == 0 ----    continue  \n");
             free(lebel);
             continue;
-        }
+        }*/
+
         /* If the first word is lebel so jmp to the beginning of the next word. */
-        if (lebel->lebel) {
+        if (lebel->lebel && there_is_lebel) {
             printf(" if lebel->lebel and then  set word to the end \n");
-            word = line + strlen(lebel->lebel) + 1;
-            NextWord(word++);
+            word = line + strlen(lebel->lebel);
+            while (*word == ' ' || *word == '\t') word++;
             printf(" print word%s \n", word);
         }
+        else
+            word = line;
 
-        /* */
+        printf("507\n");
+        printf(" print word - %s \n", word);
         if (*word == '\0' && lebel->lebel)
         {
-            error_log("Error, only lebel in line ", line_num);
+            error_log("Error, only lebel in line or only empty", line_num);
             free(lebel);
             continue;
         }
-
-        curr_char = word + 1;
-        while (!IsBlank(*curr_char) && *curr_char != '\0')
+        printf("514\n");
+        curr_char = word;
+        while (*curr_char != ' ' && *curr_char != '\t' && *curr_char != '\0')
             curr_char++;
-        printf("curr char - %s \n", --curr_char); /*dont forget to keep -- */
+        printf("518\n");
+        while (*curr_char == ' ' && *curr_char == '\t') curr_char++;
+
+        printf("curr char - %s \n", curr_char); /*dont forget to keep -- */
 
         /*5*/
         printf("check what is this line:  5\n");
         printf("  \n");
-        /*word++;*/
-        strncpy(temp_arr, word, 5);
-        printf(" print word - %s \n", temp_arr);
 
+        /*strncpy(temp_arr, word, 5);*/
+        printf(" print word - %s \n", word);
+        printf(" print curr_char - %s \n", curr_char);
         /* If its not data or string add it to symbol line*/
         if ((!strncmp(word, ".data", 5)) || (!strncmp(word, ".string", 7)) && (lebel->lebel))
         {
             printf(" build symbol node \n");
-            DC++;
-            lebel->line = DC;
+
+            parser_data.DC++;
+            lebel->line = parser_data.DC;
             lebel->type = dataType;
             /* Add the label to the labels list. */
             printf(" go to adToSymbolList-----> \n");
-            addToSymbolList(lebel_list_head, &lebel); /* check if its alredy in the list    T0D0 or change "CreateAndaddtolist" */
+            printf("lebel: %s, %d,\n", lebel->lebel, lebel->line);
+            addToSymbolList(parser_data.Shead, lebel); /* check if its alredy in the list    T0D0 or change "CreateAndaddtolist" */
         }
-
+        
         /* 7 */
         printf("\n********\n ");
 
         printf(" print word%s \n", word);
-        word++;
+        
         printf("  \n");
-        printf(" temp arr:%s\n", temp_arr);
 
         /* Data line. */
         if (!strncmp(word, ".data", 5)) {
-            continue;/************************/
+
             printf("word = %s\n", word);
             word += 6;
             printf("word = %s\n", word);
             printf(" its data ! \n");
-            continue;
             extract_data(word, line_num);
-
             continue;
         }
-
         printf(" no data \n");
+
         /* String line. */
-        if (!strncmp(word, ".string", 7))
-        {
+        if (!strncmp(word, ".string", 7)) {
             continue;/******************************/
             printf(" its string  -------------------------------- \n");
             extract_string(word, line_num, line);
             continue;
         }
-
-
         printf("no string");
+
+
         /*8*/
         /*9*/
         /* Entry label declaration line. */
-        if (!strncmp(word, ".entry", 6))
-        {
+        if (!strncmp(word, ".entry", 6) && (curr_char - word) == 6 && *curr_char != '/') {
             printf("entry");
             extract_lebel(word, curr_char, line_num, line, entryType);
-            return;/**********************/
             continue;
         }
         /*******************/
         printf("no entry");
         /*10*/
         /* External label declaration line. */
-        if (!strncmp(word, ".extern", 7)) 
-        {
+        if (!strncmp(word, ".extern", 7)) {
             printf("extern");
             extract_lebel(word, curr_char, line_num, line, externType);
-            return;
             continue;
         }
         printf("extern");
         /* add to main list */
 
         printf("no enty no extern  \n");
-        continue;/********************/
-        return;/************************/
 
 
-        IC++;
-        newLineNode(&node, IC, 0, 'A');
+        newLineNode(node, parser_data.IC++, 0, 'A');
         strcpy(node->lebel, lebel->lebel);
-
+        addToMainList(parser_data.Mhead, node);
 
         /*add to symbol table */
         /* need to add func to check if the lebel is alredy exist in the list*/
@@ -602,7 +603,7 @@ int parse(FILE* file)
         if (lebel->lebel) {
             lebel->type = codeType;
             lebel->line = DC + 1;
-            addToSymbolList(lebel_list_head, lebel); /* check if its alredy in the list    T0D0 or change "CreateAndaddtolist" */
+            addToSymbolList(parser_data.Shead, lebel); /* check if its alredy in the list    T0D0 or change "CreateAndaddtolist" */
         }
 
         /* check if too much */
@@ -611,14 +612,15 @@ int parse(FILE* file)
             continue;
         }
         /****************************************************************/
-
+        
+        printf("there is lebel: %d\n", there_is_lebel);
         NextWord(curr_char);
         /*NewCommandLine(cmd);*/
-        cmd = parseCommand(word, line_num);
+        parser_data.cmd = parseCommand(word, line_num);
 
-        /* 13*/
+        /* 13 */
         /* נתח את מבנה האופרנדים של ההוראה, וחשב מהו מס המילים הכולל שתופסת ההוראה בקוד מכונה ונקראה לו אל גדול    L*/
-        /*14*/
+        /* 14 */
         /* בניית קוד בינארי של המילה הראשונה, ןשל כל מילת-מידע נוספת המקודדת  אופרנד במיעון מיידי*/
 
     /* end of if  */
@@ -626,17 +628,11 @@ int parse(FILE* file)
         *******************************************************************/
 
     }/* end of while*/
-
-    if (errors_count > 0)
+    
+    if (parser_data.errors > 0)
         return 0;
 
-    /* 18 */
-/*
-    ICF = IC;
-    DCF = DC;
-*/
-/* 19 */
-/*update_line_in_symbol_list(); to do*/
+
 
     return 1;
     /* 17 */

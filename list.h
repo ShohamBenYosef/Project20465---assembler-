@@ -6,17 +6,10 @@
 #include <ctype.h>
 #include "error.h"
 
-extern file;
 
 
-/* build new lebel node */
-/*  need to be in list.h */
-#define NewLebelNode(_lebel) _lebel = (Lebel*)malloc(sizeof(Lebel));\
-	if (!_lebel) fatal_error(ErrorMemoryAlloc);\
-	_lebel->lebel = NULL;\
-	_lebel->line = 0;\
-	_lebel->type = 0;\
-	_lebel->next = NULL;
+typedef struct Lebel* Shead;
+typedef struct Line* Lhead;
 
 /* enum for Attributes field in the symbol table/list. */
 typedef enum {
@@ -80,5 +73,6 @@ void freeLineList(Line* head);
 Lebel* searchInLebelList(Lebel* head, char* lebel);
 Line* searchInMainList(Line* head, char* lebel);
 Line* newLineNode(Line* node, int line, int instruction, char ARE);
+Lebel* NewLebelNode();
 
 #endif

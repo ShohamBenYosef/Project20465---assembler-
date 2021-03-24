@@ -5,55 +5,52 @@
 #include "error.h"
 #include "utils.h"
 
-Lebel* lebel_list_head;
-Line* main_list_head;
 #pragma warning(disable : 4996)
 
 
 /* add */
 
-Line* addToMainList(Line* main_list_head, Line* new_node)
+Line* addToMainList(Line* list, Line* new_node)
 {
-	Line* temp = main_list_head;
+	Line* p;
 
-	if (!main_list_head)
-		main_list_head = new_node;
+	p = list;
+	if (!list)
+		list = new_node;
 	else
 	{
-		while (temp->next)
-			temp = temp->next;
+		while (p->next)
+			p = p->next;
 
-		temp->next = new_node;
+		p->next = new_node;
 	}
-	free(temp);
-	return main_list_head; /* returning pointer to the top of the list*/
+
+	return list; /* returning pointer to the top of the list*/
 }
 
-Lebel* addToSymbolList(Lebel* lebel_list_head, Lebel* new_node)
+Lebel* addToSymbolList(Lebel* list, Lebel* new_node)
 {
-	printf(" \n");
-	printf("in add to symbol. \n");
-	Lebel* temp = lebel_list_head;
+	Lebel* p;
 
-	/* If the list is empty */
-	if (!lebel_list_head)
+	printf("in add to symbol.\n");
+	p = list;
+	if (!p)
 	{
-		printf("head is null \n");
-		lebel_list_head = new_node;
+		printf("if list!=null\n");
+		/* Empty list; Let the new node be its head. */
+		list = new_node;
 	}
 	else {
-		printf("head is alredy exist \n");
-		while (temp->next)
-			temp = temp->next;
-		printf(" temp->next \n");
-		temp->next = new_node;
-	}
-	printf("finish adding return to parse. \n");
-	free(temp);
-	return lebel_list_head;
-}
+		printf("else\n");
+		/* The list is not empty; Find the tail. */
+		while (p != NULL)
+			p = p->next;
 
-/* free */
+		p->next = new_node;
+	}
+	printf("return\n");
+	return list;
+}
 
 void freeLebelList(Lebel* head)
 {
@@ -140,3 +137,15 @@ Line* newLineNode(Line* node, int line, int instruction, char ARE)
 	node->next = NULL;
 
 }
+Lebel* NewLebelNode()
+{
+	Lebel* lebel = (Lebel*)malloc(sizeof(Lebel));
+	if (!lebel)
+		fatal_error(ErrorMemoryAlloc);
+
+	lebel->lebel = NULL;
+	lebel->line = 0;
+	lebel->type = 0;
+	lebel->next = NULL;
+	return lebel;
+}ã

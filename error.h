@@ -13,7 +13,7 @@
 #define ErrorInAssemblyCode "there's error in the code - exit without create files."
 
 
-int errors_count;
+
 /**
 * Prints an error message and the program exits
 */

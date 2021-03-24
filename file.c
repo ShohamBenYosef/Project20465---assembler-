@@ -9,7 +9,7 @@
 #include "error.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 /* The file being read. */
 FILE* file;
@@ -107,58 +107,22 @@ char* read_word(const char* line, const int line_num, FILE* fp)
 {
 	printf("IN READ WORD\n");
 
-	int curr_word_index;
-	int curr_char_index;
-	char* curr_char, * temp_char;
-	int word_char; /* the word that we return */
-	char* curr_word;
-
-	printf("line = %s \n", line);
-	if (line == NULL)
-		return NULL;
-	printf("not null \n");
-	printf("  \n");
-
-	curr_word = (char*)malloc(MAX_LINE_LENGTH * sizeof(char));
-	if (!curr_word)
-		fatal_error(ErrorMemoryAlloc);
-	printf(" after memory alloc \n");
-	curr_word_index = 0;
-	curr_char = line;
-	/*set to*/
-
-	while (!isdigit(*curr_char) && !isalnum(*curr_char))
+	if (line)
 	{
-		printf(" first loop \n");
-		curr_char++;
-	}
-	temp_char = curr_char;
-	return;
-	while (curr_char != '\0' && *curr_char != ' ' && *curr_char != '\t' && !IsBlank(*curr_char))
-	{
-		printf("  sec loop\n");
-		curr_char++;
-	}
 
-	while (temp_char < curr_char)
-	{
-		printf(" third loop \n");
-		curr_word[curr_word_index] = *temp_char;
-		curr_word_index++;
-		temp_char++;
+		char* all[MAX_LINE_LENGTH];
+		char* curr_word = (char*)malloc(MAX_LINE_LENGTH * sizeof(char));
+		if (!curr_word)
+			fatal_error(ErrorMemoryAlloc);
+
+		printf("after memory alocation.\n");
+		strcpy(all, line);
+		curr_word = strtok(all, "	, ");
+		printf("after strtok  curr_word = %s\n", curr_word);
+		return curr_word;
 	}
-	printf(" after loops \n");
-	curr_word_index++;
-	curr_word[strlen(curr_word + 1)] = '\0';
-
-	printf(" temp = %s \n", curr_word);
-
-	/*if (strlen(curr_word) == 0)
-		return NULL;*/
-	printf(" *************************************\n");
-	return curr_word;
+	return '\0';
 } /* End of func */
-
 
 
 void close_file() {

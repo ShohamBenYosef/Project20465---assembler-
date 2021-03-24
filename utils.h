@@ -10,7 +10,7 @@
 #define NUM_OF_REG 7
 
 #define IsBlank(c) ((c) == ' ' || (c) == '\t')
-/*#define NextWord(x) while(IsBlank(*(x))) (x)++*/
+/*#define NextWord(x) while(*word == ' ' || *word == '\t') word++;/
 
 /*
 int IsBlank(char* c);*/
