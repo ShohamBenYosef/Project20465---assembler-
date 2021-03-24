@@ -46,4 +46,10 @@ void printObjectFile(FILE* file_name);
 */
 int addTargetToSource(const Line* node);
 
+
+void printSymbollist();
+
+void printMainlist();
+
+
 #endif

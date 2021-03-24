@@ -44,7 +44,7 @@ int parse2(char* file_name)
 
 	tmp_lebel = tmp_lebel->next;
 	printf(" after declelrations.  \n");
-	printlist();
+	
 	printf("tmp_lebel: %s\n", &tmp_lebel->lebel);
 
 	/* run on symbol list with tmp_lebel as a pointer */
@@ -257,15 +257,30 @@ int addTargetToSource(const Line* node)
 
 
 
-void printlist()
+void printSymbollist()
 {
 	printf(" 1\n");
 	Line* temp = parser_data.Shead;
-	printf(" 3\n");
-	while (temp)
+	printf(" temp.shead: %s\n", parser_data.Shead);
+	while (temp != NULL)
 	{
 		printf(" x\n");
 		printf("temp->lebel: %s\n", &temp->lebel);
+		temp = temp->next;
+	}
+}
+
+
+
+void printMainlist()
+{
+	printf(" 1\n");
+	Line* temp = parser_data.Mhead;
+	printf(" temp.shead: %s\n", parser_data.Mhead->bcode);
+	while (temp->address )
+	{
+		printf(" x\n");
+		printf("temp->lebel: %s\n", &temp->address);
 		temp = temp->next;
 	}
 }
